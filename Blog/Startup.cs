@@ -1,11 +1,16 @@
+using Blog.Controllers;
+using Blog.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using System;
 
 namespace Blog
 {
@@ -23,6 +28,25 @@ namespace Blog
         {
             services.AddControllersWithViews();
 
+            services.AddDbContext<BlogDbContext>();
+            services.AddIdentity<BlogUserEntity, IdentityRole>()
+                .AddEntityFrameworkStores<BlogDbContext>()
+                .AddRoles<IdentityRole>();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Blog API",
+                    Description = "API for the Blog backend",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Robin Larsson",
+                        Email = "robinlarsson.94@hotmail.com",
+                    },
+                });
+            });
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -48,7 +72,14 @@ namespace Blog
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
+
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
