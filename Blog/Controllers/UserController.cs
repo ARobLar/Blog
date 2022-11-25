@@ -9,12 +9,12 @@ namespace Blog.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        [HttpGet("card/{username}")]
-        public UserDto GetUserCard(string username)
+        [HttpGet("{userId}")]
+        public UserDto GetUser(string userId)
         {
             return new UserDto();
         }
-        [HttpGet("cards")]
+        [HttpGet("all/cards")]
         public IEnumerable<UserCardDto> GetUserCards() 
         {
             return new List<UserCardDto>();
@@ -27,7 +27,7 @@ namespace Blog.Controllers
         }
 
         [HttpDelete("delete/{usedId}")]
-        public bool DeleteAccount(int userId)
+        public bool DeleteAccount(string userId)
         {
             return true;
         }
