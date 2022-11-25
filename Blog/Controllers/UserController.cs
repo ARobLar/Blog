@@ -1,6 +1,7 @@
 ﻿using Blog.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 
 namespace Blog.Controllers
@@ -12,24 +13,24 @@ namespace Blog.Controllers
         [HttpGet("{userId}")]
         public UserDto GetUser(string userId)
         {
-            return new UserDto();
+            throw new NotImplementedException();
         }
         [HttpGet("all/cards")]
         public IEnumerable<UserCardDto> GetUserCards() 
         {
-            return new List<UserCardDto>();
+            throw new NotImplementedException();
         }
 
         [HttpPost("create")]
         public bool Create([FromBody] UserDto user)
         {
-            return true;
+            throw new NotImplementedException();
         }
 
-        [HttpDelete("delete/{usedId}")]
+        [HttpDelete("{usedId}")]
         public bool DeleteAccount(string userId)
         {
-            return true;
+            throw new NotImplementedException();
         }
     }
 }
