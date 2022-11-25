@@ -22,7 +22,7 @@ export default function Navigationbar() {
         <Stack direction='row' spacing={2}>
           <Button onClick={() => (router.push('/addBlogPost'))} color='inherit' >New Post</Button>
           <Button onClick={() => (router.push('/admin'))} color='inherit'>Admin</Button>
-          <Button onClick={() => (router.push('/[username]'))} color='inherit'>MyPage</Button>
+          <Button onClick={() => (router.push('/[username]'))} color='inherit'>My Page</Button>
           <Button onClick={() => (router.push('/'))} color='inherit'>Log out</Button>
           <Button onClick={() => (router.push('/signUp'))} color='inherit'>Sign up</Button>
           <Button onClick={() => (router.push('/login'))} color='inherit'>Log in</Button>
