@@ -10,7 +10,7 @@ import UserCard from '../src/components/UserCard';
 
 const useStyles = makeStyles({
 	homeHeader: {
-		backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 1)), url('https://images.unsplash.com/photo-1558981852-426c6c22a060?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80')`,
+		backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(255, 255, 255, 1)), url('https://images.unsplash.com/photo-1558981852-426c6c22a060?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80')`,
 		height: "300px",
 		backgroundPosition: "center",
 		backgroundRepeat: "no-repeat",
@@ -20,9 +20,9 @@ const useStyles = makeStyles({
 		justifyContent: "center",
 		alignItems: "center",
 		color: "#000",
-		fontSize: "4rem",
+		fontSize: "5rem",
 		[theme.breakpoints.down("sm")]: {
-			height: 300,
+			height: 200,
 			fontSize: "3em"
 		}
 	},
@@ -42,7 +42,7 @@ export default function Home() {
   return (
     <div>
       <Box className={classes.homeHeader}>
-        <Box>Welcome to Bloggalicious</Box>
+        Welcome to Bloggalicious
       </Box>
       <Container maxWidth="lg" className={classes.homeContainer}>
         <Typography variant="h4" className={classes.title}>

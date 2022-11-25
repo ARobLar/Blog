@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles"
 import { useRouter } from "next/router";
 import { featuredUser } from "../interfaces/types";
+import theme from "../theme";
 
 
 const useStyles = makeStyles({
@@ -15,9 +16,13 @@ const useStyles = makeStyles({
     alignItems: 'center'
   },
   media: {
-    height: '120px',
-    maxWidth: '120px',
+    height: '110px',
+    width: '110px',
     borderRadius: '50%',
+    [theme.breakpoints.down("sm")]: {
+			height: '80px',
+      width: '80px',
+		}
   },
   cardActions: {
     display: "flex",
