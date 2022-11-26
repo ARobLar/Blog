@@ -18,7 +18,20 @@ namespace Blog.Controllers
         [HttpGet("all/cards")]
         public IEnumerable<UserCardDto> GetUserCards() 
         {
-            throw new NotImplementedException();
+            var listOfCards = new List<UserCardDto>();
+
+            for(int i =0; i<15; i++)
+            {
+                listOfCards.Add(new UserCardDto
+                {
+                    Username = "User" + i.ToString(),
+                    AvatarLabel = "KewlBike.jpg",
+                    AvatarSource = "https://images.unsplash.com/photo-1558981852-426c6c22a060?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80"
+                });
+            }
+
+            return listOfCards;
+            //throw new NotImplementedException();
         }
 
         [HttpPost("create")]
