@@ -4,9 +4,7 @@ import React, { useState } from "react";
 import { useGetUsersQuery } from "../api/apiSlice";
 import UserCard from "./UserCard";
 
-const itemsPerPage = 4
-
-export default function PaginatedUserGrid(){
+export default function PaginatedUserGrid({itemsPerPage = 4}){
 
   const [page, setPage] = useState(1);
 

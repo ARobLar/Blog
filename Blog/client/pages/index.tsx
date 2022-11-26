@@ -44,7 +44,7 @@ export default function Home() {
         <Typography variant="h4" className={classes.title}>
           Blogs
         </Typography>
-        <PaginatedUserGrid/>
+        <PaginatedUserGrid itemsPerPage={8}/>
       </Container>
     </div>
   )
