@@ -1,12 +1,9 @@
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
 import { makeStyles } from '@mui/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import theme from "../src/theme";
-import { blogUsers } from '../mockData/blogUsers';
-import UserCard from '../src/components/UserCard';
-
+import PaginatedUserGrid from '../src/components/PaginatedUserGrid';
 
 const useStyles = makeStyles({
 	homeHeader: {
@@ -37,8 +34,7 @@ const useStyles = makeStyles({
 
 export default function Home() {
   const classes = useStyles();
-
-  const users = blogUsers;
+  
   return (
     <div>
       <Box className={classes.homeHeader}>
@@ -48,13 +44,7 @@ export default function Home() {
         <Typography variant="h4" className={classes.title}>
           Blogs
         </Typography>
-        <Grid container spacing={3}>
-          {users.map((blogUser) => (
-            <Grid key={blogUser.username} item xs={6} sm={3} md={3}>
-              <UserCard user={blogUser} />
-            </Grid>
-          ))}
-        </Grid>
+        <PaginatedUserGrid/>
       </Container>
     </div>
   )
