@@ -15,6 +15,7 @@ namespace Blog.Controllers
         {
             throw new NotImplementedException();
         }
+
         [HttpGet("all/cards")]
         public IEnumerable<UserCardDto> GetUserCards() 
         {

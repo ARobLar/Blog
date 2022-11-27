@@ -9,7 +9,7 @@ export type featuredUser = {
 export type featuredPost = {
   id : string,
   title : string,
-  date : Date,
+  creationTime : Date,
   text : string,
   imageSource: string,
   imageLabel: string,

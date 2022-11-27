@@ -34,7 +34,8 @@ export default function PostCard(props: PostCardProps) {
   const classes = useStyles();
   const router = useRouter();
   const { post } = props;
-  
+  const dateTime = new Date(Date.parse(post.creationTime.toLocaleString()));
+  //const date = (new Date(Date.parse(post.creationTime.toLocaleString()))).toLocaleString();
   return (
     <Card className={classes.card}>
       <CardActionArea onClick={() => { router.push(`/${router.query.username}/${post.title}`) }}>
@@ -48,7 +49,7 @@ export default function PostCard(props: PostCardProps) {
           {post.title}
         </Typography>
         <Typography variant="body1" component="h2" color="777">
-          {/* {post.date.toLocaleDateString()} */}
+          {dateTime.toLocaleDateString()} - {dateTime.toLocaleTimeString()}
         </Typography>
         <Typography variant="body2" color="textPrimary" component="p">
           {post.text}

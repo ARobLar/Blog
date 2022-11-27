@@ -1,13 +1,12 @@
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
 import { makeStyles } from '@mui/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import theme from "../../src/theme";
-import { blogPosts } from "../../mockData/blogPostCards";
-import PostCard from '../../src/components/PostCard';
 import { useRouter } from 'next/router';
 import PaginatedPostGrid from '../../src/components/PaginatedPostGrid';
+import { useGetUsersQuery } from '../../src/api/apiSlice';
+import { useEffect } from 'react';
 
 const useStyles = makeStyles({
 	accountTitle: {
@@ -37,9 +36,18 @@ const useStyles = makeStyles({
 })
 
 export default function MemberPage() {
-  const classes = useStyles()
-  const posts = blogPosts;
+  const classes = useStyles();
   const router = useRouter();
+
+  // For scalability, consider checking if user exists on server side instead, since all users may not be cached
+  const { data: users } = useGetUsersQuery();
+  
+  //Ensure selected user exists
+  if(users?.find(({username}) => username == router.query.username) == undefined)
+  {
+    return <div>Sorry, couldn't find the blogger you're searching for</div>
+  }
+
   return (
     <div>
       <Box className={classes.accountTitle}>
@@ -49,13 +57,6 @@ export default function MemberPage() {
         <Typography variant="h4" className={classes.blogTitle}>
           Blog Posts
         </Typography>
-        {/* <Grid container spacing={3}>
-          {posts.map((post) => (
-            <Grid key={post.id} item xs={6} sm={3} md={3}>
-              <PostCard post={post}/>
-            </Grid>
-          ))}
-        </Grid> */}
         <PaginatedPostGrid/>
       </Container>
     </div>
