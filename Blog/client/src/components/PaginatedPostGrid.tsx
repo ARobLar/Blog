@@ -1,31 +1,31 @@
 import { Button, Grid } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useState } from "react";
-import { useGetUsersQuery } from "../api/apiSlice";
-import UserCard from "./UserCard";
+import { useGetPostCardsQuery } from "../api/apiSlice";
+import PostCard from "./PostCard";
 
-export default function PaginatedUserGrid({itemsPerPage = 4}){
+export default function PaginatedPostGrid({itemsPerPage = 4}){
 
   const [page, setPage] = useState(1);
-  const { data: userCards, isFetching} = useGetUsersQuery();
+  const { data: postCards, isFetching} = useGetPostCardsQuery();
 
   if(isFetching)
   {
     return(<div>Loading</div>)
   }
 
-  if(!userCards){
-    return <div>No Users</div>
+  if(!postCards){
+    return <div>No Posts</div>
   }
 
-  const pageUserCards = userCards.slice((page-1)*itemsPerPage, (page)*itemsPerPage);
+  const pagePostCards = postCards.slice((page-1)*itemsPerPage, (page)*itemsPerPage);
 
   return(
     <div>
       <Grid container spacing={3}>
-        {pageUserCards.map((userCard) => (
-          <Grid key={userCard.username} item xs={6} sm={3} md={3}>
-            <UserCard user={userCard} />
+        {pagePostCards.map((postCard) => (
+          <Grid key={postCard.id} item xs={6} sm={3} md={3}>
+            <PostCard post={postCard} />
           </Grid>
         ))}
       </Grid>
@@ -38,7 +38,7 @@ export default function PaginatedUserGrid({itemsPerPage = 4}){
         <Button onClick={() => setPage(page - 1)} disabled={page <= 1}>
           Previous
         </Button>
-        <Button onClick={() => setPage(page + 1)} disabled={page >= (userCards.length/itemsPerPage)}>
+        <Button onClick={() => setPage(page + 1)} disabled={page >= (postCards.length/itemsPerPage)}>
           Next
         </Button>
       </Box>

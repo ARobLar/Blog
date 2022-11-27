@@ -9,7 +9,6 @@ import { useRouter } from 'next/router';
 
 export default function Navigationbar() {
   const router = useRouter();
-
   return (
     <AppBar>
       <Toolbar>
@@ -20,8 +19,8 @@ export default function Navigationbar() {
           Bloggalicious
         </Typography>
         <Stack direction='row' spacing={2}>
-          <Button onClick={() => (router.push('/addBlogPost'))} color='inherit' >New Post</Button>
-          <Button onClick={() => (router.push('/admin'))} color='inherit'>Admin</Button>
+          <Button onClick={() => (router.push('/[username]/addBlogPost'))} color='inherit' >New Post</Button>
+          <Button onClick={() => (router.push('/[username]/admin'))} color='inherit'>Admin</Button>
           <Button onClick={() => (router.push('/[username]'))} color='inherit'>My Page</Button>
           <Button onClick={() => (router.push('/'))} color='inherit'>Log out</Button>
           <Button onClick={() => (router.push('/signUp'))} color='inherit'>Sign up</Button>
