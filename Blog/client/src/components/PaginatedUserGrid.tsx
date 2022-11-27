@@ -7,7 +7,6 @@ import UserCard from "./UserCard";
 export default function PaginatedUserGrid({itemsPerPage = 4}){
 
   const [page, setPage] = useState(1);
-
   const { data: userCards, isFetching} = useGetUsersQuery();
 
   if(isFetching)
@@ -16,7 +15,7 @@ export default function PaginatedUserGrid({itemsPerPage = 4}){
   }
 
   if(!userCards){
-    return <div>No Posts:</div>
+    return <div>No Users</div>
   }
 
   const pageUserCards = userCards.slice((page-1)*itemsPerPage, (page)*itemsPerPage);
