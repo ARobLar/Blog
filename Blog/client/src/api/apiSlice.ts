@@ -11,12 +11,19 @@ export const apiSlice = createApi({
     getUsers: builder.query<featuredUser[], void>({
       query: () => `/Users/all/cards`
     }),
-    getPostCards: builder.query<featuredPost[], void>({
+    getPostCards: builder.query<featuredPost[], string>({
       query: (username) => `/Posts/${username}/all/cards`
+    }),
+    getPost: builder.query<featuredPost, string>({
+      query: (id) => `/Posts/${id}`,
+      transformResponse: (post: featuredPost) => {
+        return post;
+      }
     })
   })
 })
 
 export const { 
   useGetUsersQuery,
-  useGetPostCardsQuery } = apiSlice
+  useGetPostCardsQuery,
+  useGetPostQuery } = apiSlice

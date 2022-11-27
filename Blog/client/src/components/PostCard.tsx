@@ -35,10 +35,9 @@ export default function PostCard(props: PostCardProps) {
   const router = useRouter();
   const { post } = props;
   const dateTime = new Date(Date.parse(post.creationTime.toLocaleString()));
-  //const date = (new Date(Date.parse(post.creationTime.toLocaleString()))).toLocaleString();
   return (
     <Card className={classes.card}>
-      <CardActionArea onClick={() => { router.push(`/${router.query.username}/${post.title}`) }}>
+      <CardActionArea onClick={() => { router.push(`/${router.query.username}/${post.id}/${post.title}`) }}>
         <CardMedia
           className={classes.media}
           image={post.imageSource}
