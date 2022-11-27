@@ -48,10 +48,10 @@ export default function PostCard(props: PostCardProps) {
           {post.title}
         </Typography>
         <Typography variant="body1" component="h2" color="777">
-          {post.date.toLocaleDateString()}
+          {/* {post.date.toLocaleDateString()} */}
         </Typography>
         <Typography variant="body2" color="textPrimary" component="p">
-          {post.sampleText}
+          {post.text}
         </Typography>
         </CardContent>
       </CardActionArea>

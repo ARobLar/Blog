@@ -6,6 +6,8 @@ import Typography from '@mui/material/Typography';
 import theme from "../../src/theme";
 import { blogPosts } from "../../mockData/blogPostCards";
 import PostCard from '../../src/components/PostCard';
+import { useRouter } from 'next/router';
+import PaginatedPostGrid from '../../src/components/PaginatedPostGrid';
 
 const useStyles = makeStyles({
 	accountTitle: {
@@ -37,23 +39,24 @@ const useStyles = makeStyles({
 export default function MemberPage() {
   const classes = useStyles()
   const posts = blogPosts;
-  
+  const router = useRouter();
   return (
     <div>
       <Box className={classes.accountTitle}>
-        <Box></Box>
+        <Box>{router.query.username}</Box>
       </Box>
       <Container maxWidth="lg" className={classes.blogHomeContainer}>
         <Typography variant="h4" className={classes.blogTitle}>
           Blog Posts
         </Typography>
-        <Grid container spacing={3}>
+        {/* <Grid container spacing={3}>
           {posts.map((post) => (
             <Grid key={post.id} item xs={6} sm={3} md={3}>
               <PostCard post={post}/>
             </Grid>
           ))}
-        </Grid>
+        </Grid> */}
+        <PaginatedPostGrid/>
       </Container>
     </div>
   );

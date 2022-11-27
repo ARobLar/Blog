@@ -10,7 +10,7 @@ export type featuredPost = {
   id : string,
   title : string,
   date : Date,
-  sampleText : string,
+  text : string,
   imageSource: string,
   imageLabel: string,
 }

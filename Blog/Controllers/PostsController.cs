@@ -1,4 +1,5 @@
-﻿using Blog.Entities;
+﻿using Blog.Dto;
+using Blog.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +18,25 @@ namespace Blog.Controllers
             throw new NotImplementedException();
         }
 
-        [HttpGet("all/{username}")]
+        [HttpGet("{username}/all/cards")]
         public IEnumerable<OutPostDto> GetAllBlogPostCards(string username)
         {
-            throw new NotImplementedException();
+            var listOfCards = new List<OutPostDto>();
+            
+            for (int i = 0; i < 15; i++)
+            {
+                listOfCards.Add(new OutPostDto
+                {
+                    Id = i.ToString(),
+                    Title = "Title " + i.ToString(),
+                    CreationTime= DateTime.Now,
+                    Text = "This should amount to approximately fifty characters..",
+                    ImageLabel = "KewlBike.jpg",
+                    ImageSource = "https://images.unsplash.com/photo-1558981852-426c6c22a060?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80"
+                });
+            }
+
+            return listOfCards;
         }
 
         [HttpPost("create")]
