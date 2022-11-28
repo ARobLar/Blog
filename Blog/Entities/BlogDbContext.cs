@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Controllers
 {
-    public class BlogDbContext : IdentityDbContext
+    public class BlogDbContext : IdentityDbContext<BlogUserEntity>
     {
         public DbSet<PostEntity> Posts { get; set; }
 

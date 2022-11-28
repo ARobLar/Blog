@@ -129,6 +129,8 @@ namespace Blog
             {
                 UserName = Configuration["DefaultAdmin:Username"],
                 Email = Configuration["DefaultAdmin:Email"],
+                AvatarLabel = Configuration["DefaultAdmin:AvatarLabel"],
+                AvatarSource = Configuration["DefaultAdmin:AvatarSource"]
             };
 
             string adminPWD = Configuration["DefaultAdmin:Password"];
