@@ -12,3 +12,10 @@ export type userDto = {
   email : string
   username : string
 }
+
+export type signUpUserDto = {
+  role : string
+  email : string
+  username : string
+  password : string
+}

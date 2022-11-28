@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { hostApiBaseUrl } from "../CONSTANTS";
-import { signInDto, userDto } from "../interfaces/dto";
+import { signInDto, signUpUserDto, userDto } from "../interfaces/dto";
 import { featuredPost, featuredUser } from "../interfaces/types";
 
 
@@ -20,6 +20,13 @@ export const apiSlice = createApi({
       transformResponse: (post: featuredPost) => {
         return post;
       }
+    }),
+    signUp: builder.mutation<boolean, signUpUserDto>({
+      query: (user) => ({
+        url: `/Users/signUp`,
+        method: 'Post',
+        body: user
+      })
     }),
     signIn: builder.mutation<userDto, signInDto>({
       query: (user) => ({
@@ -41,6 +48,7 @@ export const {
   useGetUsersQuery,
   useGetPostCardsQuery,
   useGetPostQuery,
+  useSignUpMutation,
   useSignInMutation,
   useSignOutMutation
 } = apiSlice

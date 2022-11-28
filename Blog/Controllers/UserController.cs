@@ -36,9 +36,9 @@ namespace Blog.Controllers
         }
 
         [HttpPost("create")]
-        public bool Create([FromBody] UserDto user)
+        public bool Create([FromBody] SignUpUserDto user)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         [HttpDelete("{usedId}")]
