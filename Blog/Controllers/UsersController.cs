@@ -39,20 +39,14 @@ namespace Blog.Controllers
         [HttpGet("all/cards")]
         public IEnumerable<UserCardDto> GetUserCards() 
         {
-            var listOfCards = new List<UserCardDto>();
-
-            for(int i =0; i<15; i++)
+            var userCards = _userManager.Users.Select(user => new UserCardDto
             {
-                listOfCards.Add(new UserCardDto
-                {
-                    Username = "User" + i.ToString(),
-                    AvatarLabel = "KewlBike.jpg",
-                    AvatarSource = "https://images.unsplash.com/photo-1558981852-426c6c22a060?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80"
-                });
-            }
+                Username = user.UserName,
+                AvatarLabel = user.AvatarLabel,
+                AvatarSource = user.AvatarSource
+            }).ToList();
 
-            return listOfCards;
-            //throw new NotImplementedException();
+            return userCards;
         }
 
         [HttpPost("create")]
