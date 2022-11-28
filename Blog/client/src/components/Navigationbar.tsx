@@ -6,9 +6,30 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import HomeIcon from '@mui/icons-material/Home';
 import { useRouter } from 'next/router';
+import { useSignOutMutation } from '../api/apiSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectIsAdmin, selectLoggedIn, selectRole, selectUsername, signOut } from '../slices/userSlice';
+import { CircularProgress } from '@mui/material';
 
 export default function Navigationbar() {
   const router = useRouter();
+
+  const [signOutRequest, signOutResult] = useSignOutMutation();
+  const username = useSelector(selectUsername);
+  const isLoggedIn = useSelector(selectLoggedIn);
+  const isAdmin = useSelector(selectIsAdmin);
+  const dispatch = useDispatch();
+
+  async function handleSignOut(){
+    const result = await signOutRequest().unwrap();
+    
+    if(result){
+      localStorage.removeItem('user');
+      dispatch(signOut());
+      router.push('/');
+    }
+  }
+
   return (
     <AppBar>
       <Toolbar>
@@ -19,12 +40,26 @@ export default function Navigationbar() {
           Bloggalicious
         </Typography>
         <Stack direction='row' spacing={2}>
-          <Button onClick={() => (router.push('/[username]/addBlogPost'))} color='inherit' >New Post</Button>
-          <Button onClick={() => (router.push('/[username]/admin'))} color='inherit'>Admin</Button>
-          <Button onClick={() => (router.push('/[username]'))} color='inherit'>My Page</Button>
-          <Button onClick={() => (router.push('/'))} color='inherit'>Log out</Button>
-          <Button onClick={() => (router.push('/signUp'))} color='inherit'>Sign up</Button>
-          <Button onClick={() => (router.push('/login'))} color='inherit'>Log in</Button>
+          {signOutResult.isLoading && 
+            <CircularProgress sx={{ color: 'grey.100' }}/>}
+          {signOutResult.isError && 
+            <Typography>Failed to log out</Typography>}
+          {isLoggedIn &&
+            <>
+              <Button onClick={() => (router.push(`/${username}/addBlogPost`))} color='inherit' >New Post</Button>
+              <Button onClick={() => (router.push(`/${username}`))} color='inherit'>My Page</Button>
+              <Button onClick={handleSignOut} color='inherit'>Sign out</Button>
+            </>
+          }
+          {isLoggedIn && isAdmin &&
+            <Button onClick={() => (router.push(`/${username}/admin`))} color='inherit'>Admin</Button>
+          }
+          {!isLoggedIn &&
+            <>
+              <Button onClick={() => (router.push('/signUp'))} color='inherit'>Sign up</Button>
+              <Button onClick={() => (router.push('/signIn'))} color='inherit'>Sign in</Button>
+            </>
+          }
         </Stack>
       </Toolbar>
     </AppBar>

@@ -1,3 +1,4 @@
+import { UserRole } from "./enums"
 
 
 export type featuredUser = {
@@ -13,4 +14,11 @@ export type featuredPost = {
   text : string,
   imageSource: string,
   imageLabel: string,
+}
+
+export type authUser = {
+  id : string
+  role : UserRole
+  username : string
+  loggedIn : boolean
 }
