@@ -8,9 +8,11 @@ import { featuredPost, featuredUser } from "../interfaces/types";
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: hostApiBaseUrl}),
+  tagTypes: ['Users'],
   endpoints : builder => ({
     getUsers: builder.query<featuredUser[], void>({
-      query: () => `/Users/all/cards`
+      query: () => `/Users/all/cards`,
+      providesTags: ['Users']
     }),
     getPostCards: builder.query<featuredPost[], string>({
       query: (username) => `/Posts/${username}/all/cards`
@@ -26,7 +28,8 @@ export const apiSlice = createApi({
         url: `/Users/signUp`,
         method: 'Post',
         body: user
-      })
+      }),
+      invalidatesTags: ['Users']
     }),
     signIn: builder.mutation<userDto, signInDto>({
       query: (user) => ({
