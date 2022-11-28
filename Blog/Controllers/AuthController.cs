@@ -64,10 +64,23 @@ namespace Blog.Controllers
             }
         }
 
-        [HttpPost("signOut/{username}")]
-        public Task<bool> SignOutUser(string username)
+        [HttpPost("signOut")]
+        public async Task<bool> SignOutUser()
         {
-            throw new NotImplementedException();
+            bool success;
+
+            try
+            {
+                await _signInManager.SignOutAsync();
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                success = false;
+            }
+
+            return success;
         }
     }
 }

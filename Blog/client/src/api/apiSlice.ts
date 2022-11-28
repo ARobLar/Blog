@@ -38,9 +38,9 @@ export const apiSlice = createApi({
           body: user
       })
     }),
-    signOut: builder.mutation<boolean, string>({
-      query: (username) => ({
-          url: `/Auth/signOut/${username}`,
+    signOut: builder.mutation<boolean, void>({
+      query: () => ({
+          url: `/Auth/signOut`,
           method: 'Post'
       })
     })

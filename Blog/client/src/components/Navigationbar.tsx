@@ -21,7 +21,7 @@ export default function Navigationbar() {
   const dispatch = useDispatch();
 
   async function handleSignOut(){
-    const result = await signOutRequest(username).unwrap();
+    const result = await signOutRequest().unwrap();
     
     if(result){
       localStorage.removeItem('user');
