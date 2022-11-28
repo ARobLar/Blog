@@ -12,9 +12,9 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { useRouter } from 'next/router';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { authUser } from "../src/interfaces/types";
-import { signIn } from "../src/slices/userSlice";
+import { selectLoggedIn, selectUsername, signIn } from "../src/slices/userSlice";
 import { useSignInMutation } from "../src/api/apiSlice";
 import { UserRole } from "../src/interfaces/enums";
 
@@ -50,6 +50,8 @@ export default function SignIn() {
   const classes = useStyles();
   const router = useRouter();
   const dispatch = useDispatch();
+  const loggedIn = useSelector(selectLoggedIn);
+  const username = useSelector(selectUsername);
   const [signInRequest, signInResult] = useSignInMutation();
   
   async function handleOnSubmit(event) {
@@ -63,18 +65,23 @@ export default function SignIn() {
     }).unwrap();
 
     if(result){
+
       const cachedUser : authUser = {
         id : result.id,
         username : result.username,
         role : result.role as UserRole,
         loggedIn : true
       }
-        
+      console.log("Signing in");
+
       localStorage.setItem("user", JSON.stringify(cachedUser));
       dispatch(signIn(cachedUser));
-      router.push(`/${result.username}`);
+    }
+    else{
+      alert("Failed to Sign in")
     }
   }
+
   if(signInResult.isLoading){
     return <div>Attemping to sign in..</div>
   }
@@ -83,6 +90,11 @@ export default function SignIn() {
     console.log(signInResult.error);
     return <div>An error occured while attempting to sign in!</div>
   }
+
+  if(loggedIn){
+    router.push(`/${username}`);
+  }
+
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
