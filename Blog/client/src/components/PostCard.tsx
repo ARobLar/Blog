@@ -11,6 +11,7 @@ import IconButton from '@mui/material/IconButton';
 import { red, blue } from '@mui/material/colors';
 import { featuredPost, featuredUser } from '../interfaces/types';
 import { useRouter } from 'next/router';
+import { hostBaseUrl }  from "../CONSTANTS";
 
 interface PostCardProps {
   post : featuredPost
@@ -35,12 +36,13 @@ export default function PostCard(props: PostCardProps) {
   const router = useRouter();
   const { post } = props;
   const dateTime = new Date(Date.parse(post.creationTime.toLocaleString()));
+  console.log(`${hostBaseUrl}/${post.imageSource}`)
   return (
     <Card className={classes.card}>
       <CardActionArea onClick={() => { router.push(`/${router.query.username}/${post.id}/${post.title}`) }}>
         <CardMedia
           className={classes.media}
-          image={post.imageSource}
+          image={`${hostBaseUrl}/${post.imageSource}`}
           title={post.imageLabel}
         />
         <CardContent>
@@ -51,7 +53,7 @@ export default function PostCard(props: PostCardProps) {
           {dateTime.toLocaleDateString()} - {dateTime.toLocaleTimeString()}
         </Typography>
         <Typography variant="body2" color="textPrimary" component="p">
-          {post.text}
+          {post.text}..
         </Typography>
         </CardContent>
       </CardActionArea>

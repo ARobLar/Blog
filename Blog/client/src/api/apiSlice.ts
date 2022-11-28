@@ -1,27 +1,36 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { hostApiBaseUrl } from "../CONSTANTS";
-import { signInDto, signUpUserDto, userDto } from "../interfaces/dto";
+import { hostBaseUrl } from "../CONSTANTS";
+import { postOutDto, signInDto, signUpUserDto, userDto } from "../interfaces/dto";
 import { featuredPost, featuredUser } from "../interfaces/types";
 
 
 
 export const apiSlice = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: hostApiBaseUrl}),
-  tagTypes: ['Users'],
+  baseQuery: fetchBaseQuery({ baseUrl: `${hostBaseUrl}/api`}),
+  tagTypes: ['Users', 'Posts'],
   endpoints : builder => ({
     getUsers: builder.query<featuredUser[], void>({
       query: () => `/Users/all/cards`,
       providesTags: ['Users']
     }),
     getPostCards: builder.query<featuredPost[], string>({
-      query: (username) => `/Posts/${username}/all/cards`
+      query: (username) => `/Posts/${username}/all/cards`,
+      providesTags: ['Posts']
     }),
     getPost: builder.query<featuredPost, string>({
       query: (id) => `/Posts/${id}`,
       transformResponse: (post: featuredPost) => {
         return post;
       }
+    }),
+    addPost: builder.mutation<boolean, FormData>({
+      query: (post) => ({
+        url: `/Posts/create`,
+        method: 'Post',
+        body: post
+      }),
+      invalidatesTags: ['Posts']
     }),
     signUp: builder.mutation<boolean, signUpUserDto>({
       query: (user) => ({
@@ -51,6 +60,7 @@ export const {
   useGetUsersQuery,
   useGetPostCardsQuery,
   useGetPostQuery,
+  useAddPostMutation,
   useSignUpMutation,
   useSignInMutation,
   useSignOutMutation
