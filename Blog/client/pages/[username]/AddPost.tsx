@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import TextField from '@mui/material/TextField';
 import theme from "../../src/theme";
 import Box from "@mui/material/Box";
+import { useAddPostMutation } from "../../src/api/apiSlice";
 
 const useStyles = makeStyles({
     paper: {
@@ -22,10 +23,10 @@ const useStyles = makeStyles({
     }
   });
 
-export default function AddBlogPost() {
+export default function AddPost() {
   const classes = useStyles();
   const router = useRouter();
-  
+  const [addPost] = useAddPostMutation();
   const [image, setImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
@@ -39,18 +40,29 @@ export default function AddBlogPost() {
     }
   }
 
-  function handleOnSubmit(event) {
+  async function handleOnSubmit(event) {
       event.preventDefault();
       const t = event.target;
 
-      //const data = CreateBlogPost(image, t.title.value, t.text.value);
-      const success = false;
-
-      if(success) {
-        router.back();
+      if(image == null){
+        alert("You forgot to add an image");
       }
-      else {
-        alert("Failed to add blog post");
+      else{
+
+        const form = new FormData();
+        form.append("title", t.title.value);
+        form.append("creationTime", new Date().toLocaleString());
+        form.append("text", t.text.value);
+        form.append("image", image);
+        form.append("imageLabel", "");
+        const success = await addPost(form).unwrap();
+
+        if(success) {
+          router.back();
+        }
+        else {
+          alert("Failed to add blog post");
+        }
       }
     }
 
