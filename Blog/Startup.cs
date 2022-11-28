@@ -127,12 +127,12 @@ namespace Blog
             //Create default Admin
             var admin = new BlogUserEntity
             {
-                UserName = Configuration["Admin:Username"],
-                Email = Configuration["Admin:Email"],
+                UserName = Configuration["DefaultAdmin:Username"],
+                Email = Configuration["DefaultAdmin:Email"],
             };
 
-            string adminPWD = Configuration["Admin:Password"];
-            var _admin = await UserManager.FindByEmailAsync(Configuration["Admin:Email"]);
+            string adminPWD = Configuration["DefaultAdmin:Password"];
+            var _admin = await UserManager.FindByEmailAsync(Configuration["DefaultAdmin:Email"]);
 
             if (_admin == null)
             {

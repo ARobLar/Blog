@@ -25,7 +25,7 @@ export const apiSlice = createApi({
     }),
     signUp: builder.mutation<boolean, signUpUserDto>({
       query: (user) => ({
-        url: `/Users/signUp`,
+        url: `/Users/create`,
         method: 'Post',
         body: user
       }),
