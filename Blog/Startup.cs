@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Blog
@@ -48,6 +50,8 @@ namespace Blog
                     },
                 });
             });
+            services.AddSingleton<IConfiguration>(Configuration);
+
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -71,6 +75,12 @@ namespace Blog
 
             CreateRoles(serviceProvider).Wait();
             CreateDefaultAdmin(serviceProvider).Wait();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, Configuration["FileStorage:PostImagePath"])),
+                RequestPath = "/" + Configuration["FileStorage:PostImagePath"]
+            });
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
