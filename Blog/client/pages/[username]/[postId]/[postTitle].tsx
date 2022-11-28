@@ -6,6 +6,7 @@ import { useGetPostQuery } from '../../../src/api/apiSlice';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useRouter } from 'next/router';
 import theme from '../../../src/theme';
+import { hostBaseUrl } from '../../../src/CONSTANTS';
 
 const useStyles = makeStyles({
  postTitle: {
@@ -40,8 +41,9 @@ export default function DisplayPost() {
       <CircularProgress/>
     </Box>
   )}
-  
-  if(isSuccess){
+
+  if(isSuccess && post){
+
     const date = (new Date(Date.parse(post.creationTime.toLocaleString())));
 
     return ( 
@@ -49,7 +51,7 @@ export default function DisplayPost() {
         <Typography variant="h3" component="h2" className={classes.postTitle}>
           {post.title}
         </Typography>
-        <img src={post.imageSource} alt={post.imageLabel} width="100%" />
+        <img src={`${hostBaseUrl}/${post.imageSource}`} alt={post.imageLabel} width="100%" />
         <Typography variant="body1" component="h2" color="textSecondary">
           Created: {date.toLocaleDateString()} at {date.toLocaleTimeString()}
         </Typography>
@@ -59,7 +61,4 @@ export default function DisplayPost() {
         </Typography>
       </div>
   )}
-  else{
-    return <div>Failed to fetch specified Post</div>
-  }
 }
