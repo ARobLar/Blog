@@ -32,6 +32,21 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Posts']
     }),
+    updatePost: builder.mutation<boolean, FormData>({
+      query: (post) => ({
+        url: `/Posts/update`,
+        method: 'Put',
+        body: post
+      }),
+      invalidatesTags: ['Posts']
+    }),
+    deletePost: builder.mutation<boolean, string>({
+      query: (id) => ({
+        url: `/Posts/${id}`,
+        method: 'Post'
+      }),
+      invalidatesTags: ['Posts']
+    }),
     signUp: builder.mutation<boolean, signUpUserDto>({
       query: (user) => ({
         url: `/Users/create`,
