@@ -1,5 +1,6 @@
 ﻿using Blog.Dto;
 using Blog.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -65,6 +66,7 @@ namespace Blog.Controllers
         }
 
         [HttpPost("signOut")]
+        [Authorize]
         public async Task<bool> SignOutUser()
         {
             bool success;

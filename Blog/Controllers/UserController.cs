@@ -1,5 +1,6 @@
 ﻿using Blog.Dto;
 using Blog.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,7 @@ namespace Blog.Controllers
         }
 
         [HttpGet("{userId}")]
+        [Authorize]
         public UserDto GetUser(string userId)
         {
             throw new NotImplementedException();
@@ -54,6 +56,7 @@ namespace Blog.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize]
         public async Task<string> Create([FromBody] SignUpUserDto userInfo)
         {
             if (!IsValid(userInfo))
@@ -103,6 +106,7 @@ namespace Blog.Controllers
         }
 
         [HttpDelete("{usedId}")]
+        [Authorize]
         public bool DeleteAccount(string userId)
         {
             throw new NotImplementedException();
