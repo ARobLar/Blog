@@ -66,7 +66,6 @@ namespace Blog.Controllers
         }
 
         [HttpPost("signOut")]
-        [Authorize]
         public async Task<bool> SignOutUser()
         {
             bool success;
