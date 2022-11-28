@@ -15,12 +15,12 @@ namespace Blog.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<BlogUserEntity> _userManager;
+        private readonly SignInManager<BlogUserEntity> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UsersController(UserManager<IdentityUser> userManager,
-                                SignInManager<IdentityUser> signInManager,
+        public UsersController(UserManager<BlogUserEntity> userManager,
+                                SignInManager<BlogUserEntity> signInManager,
                                 RoleManager<IdentityRole> roleManager)
         {
             this._userManager = userManager;
@@ -80,7 +80,7 @@ namespace Blog.Controllers
 
                 if (res.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, userInfo.Role);
+                    await _userManager.AddToRoleAsync(user, "Member");
                     await _signInManager.SignInAsync(user, isPersistent: false);
 
                     result = "success";
