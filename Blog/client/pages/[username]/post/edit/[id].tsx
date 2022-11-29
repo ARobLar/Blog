@@ -51,7 +51,7 @@ export default function HandlePost() {
     form.append("title", t.title.value);
     form.append("creationTime", new Date().toLocaleString());
     form.append("text", t.text.value);
-    form.append("image", image);
+    form.append("image", image ? image : "");
     form.append("imageLabel", "");
 
     let success = false;
