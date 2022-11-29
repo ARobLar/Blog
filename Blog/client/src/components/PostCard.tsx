@@ -45,7 +45,7 @@ export default function PostCard(props: PostCardProps) {
 
   return (
     <Card className={classes.card}>
-      <CardActionArea onClick={() => { router.push(`/${router.query.username}/${post.id}/${post.title}`) }}>
+      <CardActionArea onClick={() => { router.push(`/${router.query.username}/post/show/${post.id}/`) }}>
         <CardMedia
           className={classes.media}
           image={`${hostBaseUrl}/${post.imageSource}`}
@@ -64,7 +64,7 @@ export default function PostCard(props: PostCardProps) {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <IconButton onClick={() => ({})}>
+        <IconButton onClick={() => {router.push(`/${router.query.username}/post/edit/${post.id}/`)}}>
           <EditOutlinedIcon sx={{color: blue[500]}} fontSize='large' />
         </IconButton>
         <IconButton onClick={handleOnDelete}>

@@ -19,10 +19,7 @@ export const apiSlice = createApi({
       providesTags: ['Posts']
     }),
     getPost: builder.query<featuredPost, string>({
-      query: (id) => `/Posts/${id}`,
-      transformResponse: (post: featuredPost) => {
-        return post;
-      }
+      query: (id) => `/Posts/${id}`
     }),
     addPost: builder.mutation<boolean, FormData>({
       query: (post) => ({
@@ -32,9 +29,9 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Posts']
     }),
-    updatePost: builder.mutation<boolean, FormData>({
-      query: (post) => ({
-        url: `/Posts/update`,
+    updatePost: builder.mutation<boolean, {post : FormData, id : string }>({
+      query: ({post, id}) => ({
+        url: `/Posts/update/${id}`,
         method: 'Put',
         body: post
       }),

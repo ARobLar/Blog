@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-//using static System.Net.Mime.MediaTypeNames;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using SixLabors.ImageSharp;
@@ -46,6 +45,11 @@ namespace Blog.Controllers
             }
 
             var post = _context.Posts.FirstOrDefault(p => p.Id == postId && p.Deleted == false);
+
+            if(post == null)
+            {
+                return null;
+            }
 
             return new OutPostDto
             {
@@ -88,7 +92,6 @@ namespace Blog.Controllers
         {
             try
             {
-
                 var user = _userManager.FindByNameAsync(User.Identity.Name).Result;
 
                 if(user == null || user.Deleted)
@@ -122,10 +125,62 @@ namespace Blog.Controllers
             }
         }
 
-        [HttpPut("update")]
-        public bool Update([FromBody] InPostDto post)
+        [HttpPut("update/{id}")]
+        public bool Update([FromForm] InPostDto editedPost, string id)
         {
-            throw  new NotImplementedException();
+            if (!int.TryParse(id, out int postId))
+            {
+                return false;
+            }
+
+            var post = _context.Posts.FirstOrDefault(p => p.Id == postId);
+
+            if (post == null)
+            {
+                return false;
+            }
+
+            post.Title = editedPost.Title;
+            post.Text = editedPost.Text;
+
+            var oldImageRootPath = string.Empty;
+            var oldThumbnailRootPath = string.Empty;
+            var editedImageRootPath = string.Empty;
+            var editedThumbnailRootPath = string.Empty;
+
+            //Update new images
+            if (editedPost.Image != null)
+            {
+                var imagePaths = SaveImage(editedPost.Image);
+
+                oldImageRootPath = Path.Combine(_hostEnvironment.ContentRootPath, post.ImageSource.Replace('/','\\'));
+                oldThumbnailRootPath = Path.Combine(_hostEnvironment.ContentRootPath, post.ThumbnailSource.Replace('/', '\\'));
+
+                post.ImageLabel = imagePaths["imageName"];
+                post.ImageSource = imagePaths["imagePath"];
+                post.ThumbnailSource = imagePaths["thumbnailPath"];
+
+                editedImageRootPath = imagePaths["imageRootPath"];
+                editedThumbnailRootPath = imagePaths["thumbnailRootPath"];
+            }
+
+            _context.Posts.Update(post);
+            var changed = _context.SaveChanges() > 0;
+
+            if(changed && oldImageRootPath != string.Empty)
+            {
+                // New images added, delete old image files
+                System.IO.File.Delete(oldImageRootPath);
+                System.IO.File.Delete(oldThumbnailRootPath);
+            } 
+            else if(!changed && editedImageRootPath != string.Empty)
+            {
+                // Failed to save new post, delete newly added images
+                System.IO.File.Delete(editedImageRootPath);
+                System.IO.File.Delete(editedThumbnailRootPath);
+            }
+
+            return changed;
         }
 
         [HttpDelete("{id}")]
@@ -176,8 +231,10 @@ namespace Blog.Controllers
 
             var imageNames = new Dictionary<string, string> {
                 { "imageName", imageName },
-                { "imagePath", string.Format("{0}/{1}{2}", subPath, imageName, extension) }, 
-                { "thumbnailPath", string.Format("{0}/{1}", subPath, thumbnailName) }};
+                { "imagePath", string.Format("{0}/{1}{2}", subPath, imageName, extension) },
+                { "thumbnailPath", string.Format("{0}/{1}", subPath, thumbnailName) },
+                { "imageRootPath", imagePath},
+                { "thumbnailRootPath", thumbnailPath} };
 
             return imageNames;
         }
