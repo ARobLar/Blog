@@ -76,6 +76,8 @@ export const {
   useGetPostCardsQuery,
   useGetPostQuery,
   useAddPostMutation,
+  useUpdatePostMutation,
+  useDeletePostMutation,
   useSignUpMutation,
   useSignInMutation,
   useSignOutMutation

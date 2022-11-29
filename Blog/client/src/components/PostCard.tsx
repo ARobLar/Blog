@@ -12,6 +12,7 @@ import { red, blue } from '@mui/material/colors';
 import { featuredPost, featuredUser } from '../interfaces/types';
 import { useRouter } from 'next/router';
 import { hostBaseUrl }  from "../CONSTANTS";
+import { useDeletePostMutation } from '../api/apiSlice';
 
 interface PostCardProps {
   post : featuredPost
@@ -34,9 +35,14 @@ const useStyles = makeStyles({
 export default function PostCard(props: PostCardProps) {
   const classes = useStyles();
   const router = useRouter();
+  const [deletePost] = useDeletePostMutation();
   const { post } = props;
   const dateTime = new Date(Date.parse(post.creationTime.toLocaleString()));
-  console.log(`${hostBaseUrl}/${post.imageSource}`)
+
+  function handleOnDelete(){
+    deletePost(post.id);
+  }
+
   return (
     <Card className={classes.card}>
       <CardActionArea onClick={() => { router.push(`/${router.query.username}/${post.id}/${post.title}`) }}>
@@ -61,7 +67,7 @@ export default function PostCard(props: PostCardProps) {
         <IconButton onClick={() => ({})}>
           <EditOutlinedIcon sx={{color: blue[500]}} fontSize='large' />
         </IconButton>
-        <IconButton onClick={() => ({})}>
+        <IconButton onClick={handleOnDelete}>
           <DeleteOutlinedIcon sx={{color: red[500]}} fontSize='large'/>
         </IconButton>
       </CardActions>
