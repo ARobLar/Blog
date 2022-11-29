@@ -83,7 +83,7 @@ export default function AddPost() {
         />
         {imageUrl && image && (
           <Box mt={3}>
-            <img src={imageUrl} alt={image.name} height="100px" />
+            <img src={imageUrl} alt={image.name} height="200px" />
           </Box>
         )}
         <input

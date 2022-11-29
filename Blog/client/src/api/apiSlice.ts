@@ -19,7 +19,8 @@ export const apiSlice = createApi({
       providesTags: ['Posts']
     }),
     getPost: builder.query<featuredPost, string>({
-      query: (id) => `/Posts/${id}`
+      query: (id) => `/Posts/${id}`,
+      providesTags: ['Posts']
     }),
     addPost: builder.mutation<boolean, FormData>({
       query: (post) => ({
