@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity;
 
 namespace Blog.Controllers
 {
@@ -21,14 +22,17 @@ namespace Blog.Controllers
     public class PostsController : ControllerBase
     {
         private readonly BlogDbContext _context;
+        private readonly UserManager<BlogUserEntity> _userManager;
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IConfiguration _config;
 
         public PostsController(BlogDbContext context,
+                                UserManager<BlogUserEntity> userManager,
                                 IWebHostEnvironment hostEnvironment,
                                 IConfiguration config)
         {
             this._context = context;
+            this._userManager = userManager;
             this._hostEnvironment = hostEnvironment;
             this._config = config;
         }
@@ -36,13 +40,12 @@ namespace Blog.Controllers
         [HttpGet("{id}")]
         public OutPostDto GetPostById(string id)
         {
-            int postId;
-            if(!int.TryParse(id, out postId))
+            if(!int.TryParse(id, out int postId))
             {
                 return null;
             }
 
-            var post = _context.Posts.FirstOrDefault(p => p.Id == postId);
+            var post = _context.Posts.FirstOrDefault(p => p.Id == postId && p.Deleted == false);
 
             return new OutPostDto
             {
@@ -58,9 +61,9 @@ namespace Blog.Controllers
         [HttpGet("{username}/all/cards")]
         public IEnumerable<OutPostDto> GetAllBlogPostCards(string username)
         {
-            var user = _context.Users.FirstOrDefault(u => u.UserName == username);
+            var user = _userManager.FindByNameAsync(username).Result;
 
-            if(user == null)
+            if(user == null || user.Deleted)
             {
                 return null;
             }
@@ -83,29 +86,40 @@ namespace Blog.Controllers
         [HttpPost("create")]
         public bool Create([FromForm] InPostDto post)
         {
-            var success = false;
-
-            var user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-
-            var imagePaths = SaveImage(post.Image);
-
-            var p = new PostEntity
+            try
             {
-                UserId = user.Id,
-                Title = post.Title,
-                CreationTime = post.CreationTime,
-                Text = post.Text,
-                ImageLabel = imagePaths["imageName"], // Split them up to imageSource and thumbnailSource
-                ImageSource = imagePaths["imagePath"],
-                ThumbnailSource = imagePaths["thumbnailPath"]
-            };
 
-            _context.Posts.Add(p);
-            _context.SaveChanges();
+                var user = _userManager.FindByNameAsync(User.Identity.Name).Result;
 
-            success = true;
+                if(user == null || user.Deleted)
+                {
+                    return false;
+                }
 
-            return success;
+                var imagePaths = SaveImage(post.Image);
+
+                var p = new PostEntity
+                {
+                    UserId = user.Id,
+                    Title = post.Title,
+                    CreationTime = post.CreationTime,
+                    Text = post.Text,
+                    ImageLabel = imagePaths["imageName"], // Split them up to imageSource and thumbnailSource
+                    ImageSource = imagePaths["imagePath"],
+                    ThumbnailSource = imagePaths["thumbnailPath"],
+                    Deleted = false
+                };
+
+                _context.Posts.Add(p);
+                _context.SaveChanges();
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
         }
 
         [HttpPut("update")]
@@ -115,9 +129,26 @@ namespace Blog.Controllers
         }
 
         [HttpDelete("{id}")]
-        public bool Delete(int id) 
+        public bool Delete(string id) 
         {
-            throw new NotImplementedException();
+
+            if (!int.TryParse(id, out int postId))
+            {
+                return false;
+            }
+
+            var post = _context.Posts.FirstOrDefault(p => p.Id == postId);
+
+            if (post != null)
+            {
+                post.Deleted = true;
+                _context.Update(post);
+                _context.SaveChanges();
+
+                return true;
+            }
+
+            return false;
         }
 
 

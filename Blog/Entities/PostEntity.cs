@@ -14,5 +14,6 @@ namespace Blog.Entities
         public string ImageLabel { get; set; }
         public string ImageSource { get; set; }
         public string ThumbnailSource { get; set; }
+        public bool Deleted { get; set; }
     }
 }

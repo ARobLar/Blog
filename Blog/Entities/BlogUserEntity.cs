@@ -6,5 +6,6 @@ namespace Blog.Entities
     {
         public string AvatarLabel { get; set; }
         public string AvatarSource {  get; set; }
+        public bool Deleted { get; set; }
     }
 }

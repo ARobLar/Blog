@@ -15,12 +15,18 @@ namespace Blog.Controllers
     public class AuthController : ControllerBase
     {
         private readonly SignInManager<BlogUserEntity> _signInManager;
+        private readonly UserManager<BlogUserEntity> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly BlogDbContext _context;
 
         public AuthController(SignInManager<BlogUserEntity> signInManager,
+                                UserManager<BlogUserEntity> userManager,
+                                RoleManager<IdentityRole> roleManager,
                                 BlogDbContext context)
         {
             this._signInManager = signInManager;
+            this._userManager = userManager;
+            this._roleManager = roleManager;
             this._context = context;
         }
 
@@ -34,6 +40,13 @@ namespace Blog.Controllers
                 return null;
             }
 
+            var userEntity = _userManager.FindByNameAsync(credentials.Username).Result;
+            
+            if (userEntity == null || userEntity.Deleted)
+            {
+                return null;
+            }
+
             try
             {
                 var res = _signInManager.PasswordSignInAsync(credentials.Username, credentials.Password, credentials.RememberMe, false).Result;
@@ -42,10 +55,9 @@ namespace Blog.Controllers
                 {
                     return null;
                 }
-
-                var userEntity = _context.Users.FirstOrDefault(u => u.UserName == credentials.Username);
+                
                 var roleId = _context.UserRoles.FirstOrDefault(r => r.UserId == userEntity.Id).RoleId;
-                var role = _context.Roles.FirstOrDefault(r => r.Id == roleId);
+                var role = _roleManager.FindByIdAsync(roleId).Result;
 
 
                 var user = new UserDto

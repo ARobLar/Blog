@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -39,12 +40,14 @@ namespace Blog.Controllers
         [HttpGet("all/cards")]
         public IEnumerable<UserCardDto> GetUserCards() 
         {
-            var userCards = _userManager.Users.Select(user => new UserCardDto
-            {
-                Username = user.UserName,
-                AvatarLabel = user.AvatarLabel,
-                AvatarSource = user.AvatarSource
-            }).ToList();
+            var userCards = _userManager.Users
+                .Where(user => user.Deleted == false)
+                .Select(user => new UserCardDto
+                {
+                    Username = user.UserName,
+                    AvatarLabel = user.AvatarLabel,
+                    AvatarSource = user.AvatarSource
+                }).ToList();
 
             return userCards;
         }
@@ -101,9 +104,21 @@ namespace Blog.Controllers
 
         [HttpDelete("{usedId}")]
         [Authorize]
-        public bool DeleteAccount(string userId)
+        public bool DeleteUser(string userId)
         {
-            throw new NotImplementedException();
+            var user = _userManager.FindByIdAsync(userId).Result;
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            user.Deleted = true;
+
+            var res = _userManager.UpdateAsync(user).Result;
+
+            return res.Succeeded;
+
         }
 
 
