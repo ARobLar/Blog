@@ -2,11 +2,11 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import makeStyles from '@mui/styles/makeStyles';
 import Box from '@mui/material/Box';
-import { useGetPostQuery } from '../../../src/api/apiSlice';
+import { useGetPostQuery } from '../../../../src/api/apiSlice';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useRouter } from 'next/router';
-import theme from '../../../src/theme';
-import { hostBaseUrl } from '../../../src/CONSTANTS';
+import theme from '../../../../src/theme';
+import { hostBaseUrl } from '../../../../src/CONSTANTS';
 
 const useStyles = makeStyles({
  postTitle: {
@@ -31,8 +31,8 @@ export default function DisplayPost() {
   
   const classes = useStyles();
   const router = useRouter();
-
-  const { data: post, isFetching, isSuccess } = useGetPostQuery(router.query.postId as string);
+  const { id } = router.query;
+  const { data: post, isFetching, isSuccess } = useGetPostQuery(id as string);
   
   if(isFetching){
     return (

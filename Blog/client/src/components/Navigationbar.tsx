@@ -46,7 +46,7 @@ export default function Navigationbar() {
             <Typography>Failed to log out</Typography>}
           {isLoggedIn &&
             <>
-              <Button onClick={() => (router.push(`/${username}/addPost`))} color='inherit' >New Post</Button>
+              <Button onClick={() => (router.push(`/${username}/post/add`))} color='inherit' >New Post</Button>
               <Button onClick={() => (router.push(`/${username}`))} color='inherit'>My Page</Button>
               <Button onClick={handleSignOut} color='inherit'>Sign out</Button>
             </>

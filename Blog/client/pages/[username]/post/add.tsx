@@ -3,9 +3,9 @@ import Button from "@mui/material/Button";
 import { makeStyles } from "@mui/styles";
 import { useRouter } from "next/router";
 import TextField from '@mui/material/TextField';
-import theme from "../../src/theme";
+import theme from "../../../src/theme";
 import Box from "@mui/material/Box";
-import { useAddPostMutation } from "../../src/api/apiSlice";
+import { useAddPostMutation } from "../../../src/api/apiSlice";
 
 const useStyles = makeStyles({
     paper: {
@@ -27,6 +27,7 @@ export default function AddPost() {
   const classes = useStyles();
   const router = useRouter();
   const [addPost] = useAddPostMutation();
+  
   const [image, setImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
