@@ -19,3 +19,11 @@ export type signUpUserDto = {
   username : string
   password : string
 }
+
+export type postOutDto = {
+  title : string,
+  creationTime : Date,
+  text : string,
+  imageLabel : string,
+  image : File
+}

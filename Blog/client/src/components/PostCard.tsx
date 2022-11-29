@@ -11,6 +11,8 @@ import IconButton from '@mui/material/IconButton';
 import { red, blue } from '@mui/material/colors';
 import { featuredPost, featuredUser } from '../interfaces/types';
 import { useRouter } from 'next/router';
+import { hostBaseUrl }  from "../CONSTANTS";
+import { useDeletePostMutation } from '../api/apiSlice';
 
 interface PostCardProps {
   post : featuredPost
@@ -33,14 +35,20 @@ const useStyles = makeStyles({
 export default function PostCard(props: PostCardProps) {
   const classes = useStyles();
   const router = useRouter();
+  const [deletePost] = useDeletePostMutation();
   const { post } = props;
   const dateTime = new Date(Date.parse(post.creationTime.toLocaleString()));
+
+  function handleOnDelete(){
+    deletePost(post.id);
+  }
+
   return (
     <Card className={classes.card}>
-      <CardActionArea onClick={() => { router.push(`/${router.query.username}/${post.id}/${post.title}`) }}>
+      <CardActionArea onClick={() => { router.push(`/${router.query.username}/post/show/${post.id}/`) }}>
         <CardMedia
           className={classes.media}
-          image={post.imageSource}
+          image={`${hostBaseUrl}/${post.imageSource}`}
           title={post.imageLabel}
         />
         <CardContent>
@@ -51,15 +59,15 @@ export default function PostCard(props: PostCardProps) {
           {dateTime.toLocaleDateString()} - {dateTime.toLocaleTimeString()}
         </Typography>
         <Typography variant="body2" color="textPrimary" component="p">
-          {post.text}
+          {post.text}..
         </Typography>
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <IconButton onClick={() => ({})}>
+        <IconButton onClick={() => {router.push(`/${router.query.username}/post/edit/${post.id}/`)}}>
           <EditOutlinedIcon sx={{color: blue[500]}} fontSize='large' />
         </IconButton>
-        <IconButton onClick={() => ({})}>
+        <IconButton onClick={handleOnDelete}>
           <DeleteOutlinedIcon sx={{color: red[500]}} fontSize='large'/>
         </IconButton>
       </CardActions>

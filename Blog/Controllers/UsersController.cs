@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -39,20 +40,16 @@ namespace Blog.Controllers
         [HttpGet("all/cards")]
         public IEnumerable<UserCardDto> GetUserCards() 
         {
-            var listOfCards = new List<UserCardDto>();
-
-            for(int i =0; i<15; i++)
-            {
-                listOfCards.Add(new UserCardDto
+            var userCards = _userManager.Users
+                .Where(user => user.Deleted == false)
+                .Select(user => new UserCardDto
                 {
-                    Username = "User" + i.ToString(),
-                    AvatarLabel = "KewlBike.jpg",
-                    AvatarSource = "https://images.unsplash.com/photo-1558981852-426c6c22a060?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80"
-                });
-            }
+                    Username = user.UserName,
+                    AvatarLabel = user.AvatarLabel,
+                    AvatarSource = user.AvatarSource
+                }).ToList();
 
-            return listOfCards;
-            //throw new NotImplementedException();
+            return userCards;
         }
 
         [HttpPost("create")]
@@ -107,9 +104,21 @@ namespace Blog.Controllers
 
         [HttpDelete("{usedId}")]
         [Authorize]
-        public bool DeleteAccount(string userId)
+        public bool DeleteUser(string userId)
         {
-            throw new NotImplementedException();
+            var user = _userManager.FindByIdAsync(userId).Result;
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            user.Deleted = true;
+
+            var res = _userManager.UpdateAsync(user).Result;
+
+            return res.Succeeded;
+
         }
 
 

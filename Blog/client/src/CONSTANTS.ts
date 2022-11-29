@@ -1,3 +1,3 @@
 
-export const hostApiBaseUrl = "https://localhost:5001/api";
-//export const hostApiBaseUrl = "https://localhost:44376/api";
+export const hostBaseUrl = "https://localhost:5001";
+//export const hostBaseUrl = "https://localhost:44376";
