@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
+import { makeStyles } from '@mui/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -16,8 +17,9 @@ import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import TableHead from '@mui/material/TableHead';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { red, blue, grey } from '@mui/material/colors';
-import { userDto } from '../../interfaces/dto';
+import { red, blueGrey, blue } from '@mui/material/colors';
+import { userDto } from '../../../interfaces/dto';
+import { fontWeight } from '@mui/system';
 
 interface TablePaginationActionsProps {
   count: number;
@@ -86,11 +88,23 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
 }
 
 
+const useStyles = makeStyles({
+  root: {
+      "& .MuiTableCell-head": {
+          color: "white",
+          backgroundColor: blue[500],
+          fontWeight: 'bold',
+          fontSize: '1em'
+      },
+  }
+});
+
 interface TableRowsProps{
   users : userDto[]
 }
 
 export default function CustomPaginationActionsTable(props: TableRowsProps) {
+  const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -113,8 +127,8 @@ export default function CustomPaginationActionsTable(props: TableRowsProps) {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
-        <TableHead sx={{color: blue[500]}}>
-          <TableRow sx={{color: blue[500]}}>
+        <TableHead >
+          <TableRow className={classes.root}>
             <TableCell>Username</TableCell>
             <TableCell align="right">Email</TableCell>
             <TableCell align="right">Role</TableCell>
@@ -125,8 +139,8 @@ export default function CustomPaginationActionsTable(props: TableRowsProps) {
           {(rowsPerPage > 0
             ? users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : users
-          ).map((user) => (
-            <TableRow key={user.id}>
+          ).map((user, index) => (
+            <TableRow key={user.id} style ={ index % 2? {background : blueGrey[100] }:{ background : blueGrey[50]}}>
               <TableCell component="th" scope="row">
                 {user.username}
               </TableCell>
