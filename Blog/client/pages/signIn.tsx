@@ -13,6 +13,7 @@ import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { useRouter } from 'next/router';
 import { useGetCurrentUserQuery, useSignInMutation } from "../src/api/apiSlice";
+import Box from "@mui/material/Box";
 
 const useStyles = makeStyles({
   root: {
@@ -88,7 +89,7 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} onSubmit={handleOnSubmit}>
+          <Box component="form" className={classes.form} onSubmit={handleOnSubmit}>
             <TextField
               id="name"
               name="name"
@@ -139,7 +140,7 @@ export default function SignIn() {
                 </Button>
               </Grid>
             </Grid>
-          </form>
+          </Box>
         </div>
       </Grid>
     </Grid>

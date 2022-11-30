@@ -14,6 +14,7 @@ import Container from "@mui/material/Container";
 import { useRouter } from 'next/router';
 import theme from "../src/theme";
 import { useGetCurrentUserQuery, useSignUpMutation } from "../src/api/apiSlice";
+import Box from "@mui/material/Box";
 
 const useStyles = makeStyles({
   "@global": {
@@ -85,7 +86,7 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate onSubmit={handleOnSubmit}>
+        <Box component="form" className={classes.form} onSubmit={handleOnSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -122,12 +123,12 @@ export default function SignUp() {
                 autoComplete="current-password"
               />
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <FormControlLabel
                 control={<Checkbox value="allowExtraEmails" color="primary" />}
                 label="I want to receive inspiration, marketing promotions and updates via email."
               />
-            </Grid>
+            </Grid> */}
           </Grid>
           <Button
             type="submit"
@@ -145,7 +146,7 @@ export default function SignUp() {
               </Button>
             </Grid>
           </Grid>
-        </form>
+        </Box>
       </div>
     </Container>
   );
