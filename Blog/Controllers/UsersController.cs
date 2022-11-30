@@ -1,15 +1,10 @@
 ﻿using Blog.Dto;
 using Blog.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using static Blog.Controllers.SharedControllerFunctions;
 
 namespace Blog.Controllers
@@ -31,11 +26,23 @@ namespace Blog.Controllers
             this._roleManager = roleManager;
         }
 
-        [HttpGet("{userId}")]
-        [Authorize]
-        public UserDto GetUser(string userId)
+        [HttpGet("current")]
+        public UserDto GetCurrentUser()
         {
-            throw new NotImplementedException();
+            if(!User.Identity.IsAuthenticated)
+            {
+                return null;
+            }
+
+            var userEntity = _userManager.FindByNameAsync(User.Identity.Name).Result;
+
+            return new UserDto
+                {
+                    Id = userEntity.Id,
+                    Username = userEntity.UserName,
+                    Role = _userManager.GetRolesAsync(userEntity).Result[0],
+                    Email = userEntity.Email,
+                };
         }
 
         [HttpGet("all/cards")]

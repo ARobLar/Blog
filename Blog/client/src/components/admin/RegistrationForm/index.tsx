@@ -69,7 +69,7 @@ export default function RegistrationForm(){
             autoFocus
             >
               {roles.map((role) => (
-                <MenuItem value={role}>
+                <MenuItem key={role} value={role}>
                   {role.toString()}
                 </MenuItem>
               ))}
