@@ -8,8 +8,12 @@ import { featuredPost, featuredUser } from "../interfaces/types";
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: `${hostBaseUrl}/api`}),
-  tagTypes: ['Users', 'Posts'],
+  tagTypes: ['Users', 'Posts', 'Authorized'],
   endpoints : builder => ({
+    getCurrentUser: builder.query<userDto, void>({
+      query: () => `/Users/current`,
+      providesTags: ['Authorized']
+    }),
     getUsers: builder.query<featuredUser[], void>({
       query: () => `/Users/all/cards`,
       providesTags: ['Users']
@@ -70,18 +74,21 @@ export const apiSlice = createApi({
           url: `/Auth/signIn`,
           method: 'Post',
           body: user
-      })
+      }),
+      invalidatesTags: ['Authorized']
     }),
     signOut: builder.mutation<boolean, void>({
       query: () => ({
           url: `/Auth/signOut`,
           method: 'Post'
-      })
+      }),
+      invalidatesTags: ['Authorized']
     })
   })
 })
 
 export const { 
+  useGetCurrentUserQuery,
   useGetUsersQuery,
   useGetUsersInfoQuery,
   useGetPostCardsQuery,

@@ -135,7 +135,7 @@ namespace Blog.Controllers
 
             var post = _context.Posts.FirstOrDefault(p => p.Id == postId);
 
-            if (post == null)
+            if (post == null || !isAuthor(post.UserId))
             {
                 return false;
             }
@@ -194,7 +194,7 @@ namespace Blog.Controllers
 
             var post = _context.Posts.FirstOrDefault(p => p.Id == postId);
 
-            if (post != null)
+            if (post != null && isAuthor(post.UserId))
             {
                 post.Deleted = true;
                 _context.Update(post);
@@ -237,6 +237,15 @@ namespace Blog.Controllers
                 { "thumbnailRootPath", thumbnailPath} };
 
             return imageNames;
+        }
+
+        private bool isAuthor(string UserId)
+        {
+            var author = _userManager.FindByIdAsync(UserId).Result;
+
+            var authorName = author != null ? author.UserName : string.Empty;
+
+            return User.Identity.Name == authorName;
         }
     }
 }

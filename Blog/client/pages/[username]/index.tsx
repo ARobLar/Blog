@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import theme from "../../src/theme";
 import { useRouter } from 'next/router';
 import PaginatedPostGrid from '../../src/components/PaginatedPostGrid';
-import { useGetUsersQuery } from '../../src/api/apiSlice';
+import { useGetCurrentUserQuery, useGetUsersQuery } from '../../src/api/apiSlice';
 import { useEffect } from 'react';
 
 const useStyles = makeStyles({

@@ -27,4 +27,7 @@ export default function UserTable() {
       </div>
     );
   }
+  else{
+    return<h2>Failed to load users</h2>
+  }
 }

@@ -13,7 +13,7 @@ import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import { useRouter } from 'next/router';
 import theme from "../src/theme";
-import { useSignUpMutation } from "../src/api/apiSlice";
+import { useGetCurrentUserQuery, useSignUpMutation } from "../src/api/apiSlice";
 
 const useStyles = makeStyles({
   "@global": {
@@ -45,6 +45,7 @@ export default function SignUp() {
   const classes = useStyles();
   const router = useRouter();
   const [signUpRequest] = useSignUpMutation();
+  const {data: user, isFetching, isSuccess} = useGetCurrentUserQuery();
 
   async function handleOnSubmit(event){
     event.preventDefault();
@@ -64,6 +65,14 @@ export default function SignUp() {
     else{
       alert('Failed to register!')
     }
+  }
+  
+  if(isFetching){
+    return <h1>Loading..</h1>
+  }
+
+  if(isSuccess && user){
+    router.push(`/${user.username}`);
   }
   
   return (

@@ -12,10 +12,11 @@ import { red, blue } from '@mui/material/colors';
 import { featuredPost, featuredUser } from '../interfaces/types';
 import { useRouter } from 'next/router';
 import { hostBaseUrl }  from "../CONSTANTS";
-import { useDeletePostMutation } from '../api/apiSlice';
+import { useDeletePostMutation, useGetCurrentUserQuery } from '../api/apiSlice';
 
 interface PostCardProps {
-  post : featuredPost
+  post : featuredPost,
+  isAuthor : boolean
 }
 
 const useStyles = makeStyles({
@@ -36,7 +37,7 @@ export default function PostCard(props: PostCardProps) {
   const classes = useStyles();
   const router = useRouter();
   const [deletePost] = useDeletePostMutation();
-  const { post } = props;
+  const { post, isAuthor } = props;
   const dateTime = new Date(Date.parse(post.creationTime.toLocaleString()));
 
   function handleOnDelete(){
@@ -63,14 +64,16 @@ export default function PostCard(props: PostCardProps) {
         </Typography>
         </CardContent>
       </CardActionArea>
-      <CardActions>
-        <IconButton onClick={() => {router.push(`/${router.query.username}/post/edit/${post.id}/`)}}>
-          <EditOutlinedIcon sx={{color: blue[500]}} fontSize='large' />
-        </IconButton>
-        <IconButton onClick={handleOnDelete}>
-          <DeleteOutlinedIcon sx={{color: red[500]}} fontSize='large'/>
-        </IconButton>
-      </CardActions>
+      {isAuthor &&
+        <CardActions>
+          <IconButton onClick={() => {router.push(`/${router.query.username}/post/edit/${post.id}/`)}}>
+            <EditOutlinedIcon sx={{color: blue[500]}} fontSize='large' />
+          </IconButton>
+          <IconButton onClick={handleOnDelete}>
+            <DeleteOutlinedIcon sx={{color: red[500]}} fontSize='large'/>
+          </IconButton>
+        </CardActions>
+      }
     </Card>
  );
 }

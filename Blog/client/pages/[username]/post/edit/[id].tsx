@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { makeStyles } from "@mui/styles";
 import { useRouter } from "next/router";
 import TextField from '@mui/material/TextField';
 import theme from "../../../../src/theme";
 import Box from "@mui/material/Box";
-import { useGetPostQuery, useUpdatePostMutation } from "../../../../src/api/apiSlice";
+import { useGetCurrentUserQuery, useGetPostQuery, useUpdatePostMutation } from "../../../../src/api/apiSlice";
 import { hostBaseUrl } from "../../../../src/CONSTANTS";
 
 const useStyles = makeStyles({
@@ -33,7 +33,10 @@ export default function HandlePost() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const {data: post, isFetching, isSuccess } = useGetPostQuery(id as string);
-  
+  const { data: user, isSuccess: isSuccessUser } = useGetCurrentUserQuery();
+  const isCurrentUser = (user != undefined) && (user.username == router.query.username);
+
+
   function handleImageUpload(event) {
     const t = event.target;
     if(t.files != null && t.files[0] != null){
@@ -62,6 +65,10 @@ export default function HandlePost() {
     }
   }
   
+  if(isSuccessUser && !isCurrentUser){
+    router.back();
+  }
+
   if(isFetching){
     return <div>Loading..</div>
   }

@@ -2,14 +2,18 @@ import { Button, Grid } from "@mui/material";
 import { Box } from "@mui/system";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { useGetPostCardsQuery } from "../api/apiSlice";
+import { useGetCurrentUserQuery, useGetPostCardsQuery } from "../api/apiSlice";
 import PostCard from "./PostCard";
 
 export default function PaginatedPostGrid({itemsPerPage = 4}){
 
   const [page, setPage] = useState(1);
   const router = useRouter()
-  const { data: postCards, isFetching} = useGetPostCardsQuery(router.query.username as string);
+  const queryUsername = router.query.username as string;
+  const { data: postCards, isFetching} = useGetPostCardsQuery(queryUsername);
+  const { data: user } = useGetCurrentUserQuery();
+  
+  const isAuthor = (user != undefined) && (user.username == queryUsername);
 
   if(isFetching)
   {
@@ -27,7 +31,7 @@ export default function PaginatedPostGrid({itemsPerPage = 4}){
       <Grid container spacing={3}>
         {pagePostCards.map((postCard) => (
           <Grid key={postCard.id} item xs={6} sm={3} md={3}>
-            <PostCard post={postCard} />
+            <PostCard post={postCard} isAuthor={isAuthor} />
           </Grid>
         ))}
       </Grid>
