@@ -11,7 +11,7 @@ export default function UserTable() {
     return(
         <div>
             <Container maxWidth="lg">
-                <Typography>
+                <Typography sx={{fontWeight:"bold", fontSize:"2em"}}>
                     Active Accounts
                 </Typography>
                 <UserTableList users={users}/>
