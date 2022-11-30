@@ -44,7 +44,9 @@ export default function RegistrationForm(){
       const success = await signUpUser(userInfo).unwrap();
 
       if(success){
-        alert("Added user: " + userInfo);
+        console.log(userInfo);
+        var form = document.getElementById("register-user-as-admin-form") as HTMLFormElement;
+        form.reset();
       }
 
     }
@@ -53,7 +55,7 @@ export default function RegistrationForm(){
   const roles = Object.values(UserRole);
   return (
     <Container component="main" maxWidth="xs">
-      <Box component="form" className={classes.form} onSubmit={handleOnSubmit}>
+      <Box component="form" id="register-user-as-admin-form" className={classes.form} onSubmit={handleOnSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Select

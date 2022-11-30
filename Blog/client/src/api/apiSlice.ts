@@ -14,6 +14,10 @@ export const apiSlice = createApi({
       query: () => `/Users/all/cards`,
       providesTags: ['Users']
     }),
+    getUsersInfo: builder.query<userDto[], void>({
+      query: () => `/Admin/users`,
+      providesTags: ['Users']
+    }),
     getPostCards: builder.query<featuredPost[], string>({
       query: (username) => `/Posts/${username}/all/cards`,
       providesTags: ['Posts']
@@ -79,6 +83,7 @@ export const apiSlice = createApi({
 
 export const { 
   useGetUsersQuery,
+  useGetUsersInfoQuery,
   useGetPostCardsQuery,
   useGetPostQuery,
   useAddPostMutation,
