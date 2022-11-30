@@ -7,7 +7,6 @@ import theme from "../../../theme";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { UserRole } from "../../../interfaces/enums";
-import { signUpUserDto } from "../../../interfaces/dto";
 import Box from "@mui/material/Box";
 import { useSignUpUserAsAdminMutation } from "../../../api/apiSlice";
 
