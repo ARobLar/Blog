@@ -45,7 +45,7 @@ namespace Blog.Controllers
                 var user = new BlogUserEntity
                 {
                     AvatarSource = @"https://source.unsplash.com/random",
-                    AvatarLabel = 'RandomImage',
+                    AvatarLabel = "RandomImage",
                     UserName = userInfo.Username,
                     Email = userInfo.Email
                 };
