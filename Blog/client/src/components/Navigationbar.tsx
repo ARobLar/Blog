@@ -53,8 +53,8 @@ export default function Navigationbar() {
                 <Button onClick={handleSignOut} color='inherit'>Sign out</Button>
               </>
             }
-            {isLoggedIn && isAdmin &&
-              <Button onClick={() => (router.push(`/${username}/admin`))} color='inherit'>Admin</Button>
+            {isAdmin &&
+              <Button onClick={() => (router.push(`/admin`))} color='inherit'>Admin</Button>
             }
             {!isLoggedIn &&
               <>
