@@ -140,9 +140,9 @@ export default function SignUp() {
           </Button>
           <Grid container>
             <Grid item>
-              <Link href="/SignIn" variant="body2">
+              <Button onClick={() => {router.push("/signIn")}} variant="text">
                 Already have an account? Sign in
-              </Link>
+              </Button>
             </Grid>
           </Grid>
         </form>

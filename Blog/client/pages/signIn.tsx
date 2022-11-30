@@ -128,15 +128,15 @@ export default function SignIn() {
               Sign In
             </Button>
             <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
+              {/* <Grid item xs>
+                <Button href="#" variant="text">
                   Forgot password?
-                </Link>
-              </Grid>
+                </Button>
+              </Grid> */}
               <Grid item>
-                <Link href="/SignUp" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
+                <Button onClick={() => {router.push("/signUp")}} variant="text">
+                  Don't have an account? Sign Up
+                </Button>
               </Grid>
             </Grid>
           </form>
