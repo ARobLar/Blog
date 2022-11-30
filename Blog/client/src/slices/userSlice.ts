@@ -25,7 +25,7 @@ export const userSlice = createSlice({
         signOut: (state) => {
           state.id = "";
           state.username = "";
-          state.role = UserRole.Anonymous;
+          state.role = UserRole.None;
           state.loggedIn = false;
         }
     }

@@ -1,11 +1,8 @@
 ﻿using Blog.Dto;
 using Blog.Entities;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Blog.Controllers
@@ -16,8 +13,6 @@ namespace Blog.Controllers
     {
         private readonly SignInManager<BlogUserEntity> _signInManager;
         private readonly UserManager<BlogUserEntity> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly BlogDbContext _context;
 
         public AuthController(SignInManager<BlogUserEntity> signInManager,
                                 UserManager<BlogUserEntity> userManager,
@@ -26,8 +21,6 @@ namespace Blog.Controllers
         {
             this._signInManager = signInManager;
             this._userManager = userManager;
-            this._roleManager = roleManager;
-            this._context = context;
         }
 
         [HttpPost("signIn")]
@@ -56,16 +49,14 @@ namespace Blog.Controllers
                     return null;
                 }
                 
-                var roleId = _context.UserRoles.FirstOrDefault(r => r.UserId == userEntity.Id).RoleId;
-                var role = _roleManager.FindByIdAsync(roleId).Result;
-
+                var role = _userManager.GetRolesAsync(userEntity).Result[0];
 
                 var user = new UserDto
                 {
                     Id = userEntity.Id,
                     Username = userEntity.UserName,
                     Email = userEntity.Email,
-                    Role = role.Name
+                    Role = role
                 };
 
                 return user;

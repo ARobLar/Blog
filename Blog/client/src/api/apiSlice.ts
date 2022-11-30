@@ -14,6 +14,10 @@ export const apiSlice = createApi({
       query: () => `/Users/all/cards`,
       providesTags: ['Users']
     }),
+    getUsersInfo: builder.query<userDto[], void>({
+      query: () => `/Admin/users`,
+      providesTags: ['Users']
+    }),
     getPostCards: builder.query<featuredPost[], string>({
       query: (username) => `/Posts/${username}/all/cards`,
       providesTags: ['Posts']
@@ -45,6 +49,14 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Posts']
     }),
+    signUpUserAsAdmin: builder.mutation<boolean, signUpUserDto>({
+      query: (user) => ({
+        url: `/Admin/create`,
+        method: 'Post',
+        body: user
+      }),
+      invalidatesTags: ['Users']
+    }),
     signUp: builder.mutation<boolean, signUpUserDto>({
       query: (user) => ({
         url: `/Users/create`,
@@ -71,11 +83,13 @@ export const apiSlice = createApi({
 
 export const { 
   useGetUsersQuery,
+  useGetUsersInfoQuery,
   useGetPostCardsQuery,
   useGetPostQuery,
   useAddPostMutation,
   useUpdatePostMutation,
   useDeletePostMutation,
+  useSignUpUserAsAdminMutation,
   useSignUpMutation,
   useSignInMutation,
   useSignOutMutation

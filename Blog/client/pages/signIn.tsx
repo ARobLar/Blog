@@ -129,7 +129,6 @@ export default function SignIn() {
               required
               fullWidth
               type="password"
-              // pattern= "[a-z0-9]{1,15}"
               title="Password may only contain numbers 0 to 9 and letter a to z"
               />
             <FormControlLabel
