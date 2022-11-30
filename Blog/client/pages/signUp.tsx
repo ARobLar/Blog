@@ -55,7 +55,7 @@ export default function SignUp() {
       role: "Member",
       email: t.email.value, 
       username: t.name.value, 
-      password: t.password.value  
+      password: t.password.value
     }).unwrap();
     
     if(success){

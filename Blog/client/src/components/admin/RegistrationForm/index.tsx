@@ -7,7 +7,9 @@ import theme from "../../../theme";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { UserRole } from "../../../interfaces/enums";
+import { signUpUserDto } from "../../../interfaces/dto";
 import Box from "@mui/material/Box";
+import { useSignUpUserAsAdminMutation } from "../../../api/apiSlice";
 
 const useStyles = makeStyles({
     form: {
@@ -21,17 +23,34 @@ const useStyles = makeStyles({
 
 export default function RegistrationForm(){
   const classes = useStyles();
+  const [signUpUser] = useSignUpUserAsAdminMutation();
 
-  const handleOnSubmit = (e) => {
+  async function handleOnSubmit(e){
     e.preventDefault();
     const t = e.target;
+    let userInfo;
 
-    console.log(t.Role.value);
-    console.log(t.name.value);
-    console.log(t.email.value);
-    console.log(t.password.value);
-    
+    if(t.Role.value == UserRole.None)
+    {
+      alert("Please select a user role");
+    }
+    else{
+      userInfo = {
+        role: t.Role.value.toString(),
+        email: t.email.value, 
+        username: t.name.value, 
+        password: t.password.value
+      }
+
+      const success = await signUpUser(userInfo).unwrap();
+
+      if(success){
+        alert("Added user: " + userInfo);
+      }
+
+    }
   }
+
   const roles = Object.values(UserRole);
   return (
     <Container component="main" maxWidth="xs">

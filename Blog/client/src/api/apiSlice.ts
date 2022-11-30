@@ -45,6 +45,14 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Posts']
     }),
+    signUpUserAsAdmin: builder.mutation<boolean, signUpUserDto>({
+      query: (user) => ({
+        url: `/Admin/create`,
+        method: 'Post',
+        body: user
+      }),
+      invalidatesTags: ['Users']
+    }),
     signUp: builder.mutation<boolean, signUpUserDto>({
       query: (user) => ({
         url: `/Users/create`,
@@ -76,6 +84,7 @@ export const {
   useAddPostMutation,
   useUpdatePostMutation,
   useDeletePostMutation,
+  useSignUpUserAsAdminMutation,
   useSignUpMutation,
   useSignInMutation,
   useSignOutMutation
