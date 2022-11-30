@@ -61,7 +61,6 @@ namespace Blog.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize]
         public bool Create([FromBody] SignUpUserDto userInfo)
         {
             userInfo.Role = "Member";
