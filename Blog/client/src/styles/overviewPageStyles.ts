@@ -13,7 +13,7 @@ export const useHeadlineStyles = makeStyles({
     justifyContent: "center",
     alignItems: "center",
     color: "#000",
-    fontSize: "10vw",
+    fontSize: "8vw",
     margin: "0px -8px",
   },
   container: {
@@ -21,7 +21,7 @@ export const useHeadlineStyles = makeStyles({
   },
   title: {
     fontWeight: 800,
-    fontSize: "5vw",
+    fontSize: "4vw",
     paddingBottom: theme.spacing(3)
   },
 
