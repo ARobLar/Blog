@@ -88,6 +88,7 @@ namespace Blog.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize]
         public bool Create([FromForm] InPostDto post)
         {
             try
@@ -126,6 +127,7 @@ namespace Blog.Controllers
         }
 
         [HttpPut("update/{id}")]
+        [Authorize]
         public bool Update([FromForm] InPostDto editedPost, string id)
         {
             if (!int.TryParse(id, out int postId))
@@ -135,7 +137,7 @@ namespace Blog.Controllers
 
             var post = _context.Posts.FirstOrDefault(p => p.Id == postId);
 
-            if (post == null || !isAuthor(post.UserId))
+            if (post == null || !IsAuthor(post.UserId))
             {
                 return false;
             }
@@ -184,6 +186,7 @@ namespace Blog.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public bool Delete(string id) 
         {
 
@@ -194,7 +197,7 @@ namespace Blog.Controllers
 
             var post = _context.Posts.FirstOrDefault(p => p.Id == postId);
 
-            if (post != null && isAuthor(post.UserId))
+            if (post != null && IsAuthor(post.UserId))
             {
                 post.Deleted = true;
                 _context.Update(post);
@@ -239,7 +242,7 @@ namespace Blog.Controllers
             return imageNames;
         }
 
-        private bool isAuthor(string UserId)
+        private bool IsAuthor(string UserId)
         {
             var author = _userManager.FindByIdAsync(UserId).Result;
 

@@ -8,23 +8,22 @@ export default function PaginatedUserGrid({itemsPerPage = 4}){
 
   const [page, setPage] = useState(1);
   const { data: userCards, isFetching} = useGetUsersQuery();
-
   if(isFetching)
   {
     return(<div>Loading</div>)
   }
-
+  
   if(!userCards){
     return <div>No Users</div>
   }
-
+  
   const pageUserCards = userCards.slice((page-1)*itemsPerPage, (page)*itemsPerPage);
-
+  
   return(
     <div>
       <Grid container spacing={3}>
         {pageUserCards.map((userCard) => (
-          <Grid key={userCard.username} item xs={6} sm={3} md={3}>
+          <Grid key={userCard.username} item xs={3}>
             <UserCard user={userCard} />
           </Grid>
         ))}

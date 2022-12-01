@@ -13,36 +13,21 @@ import { featuredPost, featuredUser } from '../interfaces/types';
 import { useRouter } from 'next/router';
 import { hostBaseUrl }  from "../CONSTANTS";
 import { useDeletePostMutation, useGetCurrentUserQuery } from '../api/apiSlice';
+import { useCardStyles } from '../styles/overviewPageStyles';
+import DeleteOutlined from '@mui/icons-material/DeleteOutlined';
+import Button from '@mui/material/Button';
 
 interface PostCardProps {
   post : featuredPost,
   isAuthor : boolean
 }
 
-const useStyles = makeStyles({
- card: {
-  maxWidth: "100%",
- },
- media: {
-  height: 250
- },
- cardActions: {
-  display: "flex",
-  margin: "0 10px",
-  justifyContent: "space-between"
- },
-})
-
 export default function PostCard(props: PostCardProps) {
-  const classes = useStyles();
+  const classes = useCardStyles();
   const router = useRouter();
   const [deletePost] = useDeletePostMutation();
   const { post, isAuthor } = props;
   const dateTime = new Date(Date.parse(post.creationTime.toLocaleString()));
-
-  function handleOnDelete(){
-    deletePost(post.id);
-  }
 
   return (
     <Card className={classes.card}>
@@ -52,25 +37,25 @@ export default function PostCard(props: PostCardProps) {
           image={`${hostBaseUrl}/${post.imageSource}`}
           title={post.imageLabel}
         />
-        <CardContent>
-        <Typography gutterBottom variant="h5" component="h2">
+        <CardContent className={classes.content}>
+        <Typography className={classes.title}>
           {post.title}
         </Typography>
-        <Typography variant="body1" component="h2" color="777">
+        <Typography className={classes.date}>
           {dateTime.toLocaleDateString()} - {dateTime.toLocaleTimeString()}
         </Typography>
-        <Typography variant="body2" color="textPrimary" component="p">
+        <Typography className={classes.text}>
           {post.text}..
         </Typography>
         </CardContent>
       </CardActionArea>
       {isAuthor &&
-        <CardActions>
+        <CardActions className={classes.actions}>
           <IconButton onClick={() => {router.push(`/${router.query.username}/post/edit/${post.id}/`)}}>
-            <EditOutlinedIcon sx={{color: blue[500]}} fontSize='large' />
+            <EditOutlinedIcon className={classes.icon} sx={{color: blue[500]}}/>
           </IconButton>
-          <IconButton onClick={handleOnDelete}>
-            <DeleteOutlinedIcon sx={{color: red[500]}} fontSize='large'/>
+          <IconButton onClick={() => {deletePost(post.id)}}>
+            <DeleteOutlinedIcon className={classes.icon} sx={{color: red[500]}}/>
           </IconButton>
         </CardActions>
       }

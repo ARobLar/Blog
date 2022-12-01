@@ -44,6 +44,8 @@ namespace Blog.Controllers
             {
                 var user = new BlogUserEntity
                 {
+                    AvatarSource = @"https://source.unsplash.com/random",
+                    AvatarLabel = "RandomImage",
                     UserName = userInfo.Username,
                     Email = userInfo.Email
                 };
@@ -53,7 +55,6 @@ namespace Blog.Controllers
                 if (res.Succeeded)
                 {
                     await userManager.AddToRoleAsync(user, userInfo.Role);
-                    await signInManager.SignInAsync(user, isPersistent: false);
 
                     result = "success";
                 }

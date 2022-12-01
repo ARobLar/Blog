@@ -37,7 +37,7 @@ export default function RegistrationForm(){
       userInfo = {
         role: t.Role.value.toString(),
         email: t.email.value, 
-        username: t.name.value, 
+        username: t.username.value, 
         password: t.password.value
       }
 
@@ -77,13 +77,14 @@ export default function RegistrationForm(){
           </Grid>
           <Grid item xs={12}>
             <TextField
-              id="name"
-              name="Name"
-              label="Name"
-              autoComplete="name"
+              id="username"
+              name="Username"
+              label="Username"
+              autoComplete="username"
               variant="outlined"
               required
               fullWidth
+              inputProps= {{maxLength: "15"}}
               autoFocus
               />
           </Grid>

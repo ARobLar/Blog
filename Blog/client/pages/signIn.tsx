@@ -13,6 +13,7 @@ import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { useRouter } from 'next/router';
 import { useGetCurrentUserQuery, useSignInMutation } from "../src/api/apiSlice";
+import Box from "@mui/material/Box";
 
 const useStyles = makeStyles({
   root: {
@@ -53,7 +54,7 @@ export default function SignIn() {
     const t = event.target;
     
     signInRequest({
-      username : t.name.value,
+      username : t.username.value,
       password : t.password.value,
       rememberMe : t.remember.checked
     });
@@ -88,16 +89,17 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} onSubmit={handleOnSubmit}>
+          <Box component="form" className={classes.form} onSubmit={handleOnSubmit}>
             <TextField
-              id="name"
-              name="name"
-              label="Name"
-              autoComplete="name"
+              id="username"
+              name="username"
+              label="Username"
+              autoComplete="username"
               variant="outlined"
               margin="normal"
               required
               fullWidth
+              inputProps= {{maxLength: "15"}}
               autoFocus
               />
             <TextField
@@ -128,18 +130,18 @@ export default function SignIn() {
               Sign In
             </Button>
             <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
+              {/* <Grid item xs>
+                <Button href="#" variant="text">
                   Forgot password?
-                </Link>
-              </Grid>
+                </Button>
+              </Grid> */}
               <Grid item>
-                <Link href="/SignUp" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
+                <Button onClick={() => {router.push("/signUp")}} variant="text">
+                  Don't have an account? Sign Up
+                </Button>
               </Grid>
             </Grid>
-          </form>
+          </Box>
         </div>
       </Grid>
     </Grid>

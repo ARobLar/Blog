@@ -26,7 +26,7 @@ const useStyles = makeStyles({
 export default function AddPost() {
   const classes = useStyles();
   const router = useRouter();
-  const [addPost] = useAddPostMutation();
+  const [addPost, addPostResult] = useAddPostMutation();
   const { data: user, isFetching, isSuccess } = useGetCurrentUserQuery();
   const isCurrentUser = (user != undefined) && (user.username == router.query.username);
   const [image, setImage] = useState<File | null>(null);
@@ -57,15 +57,12 @@ export default function AddPost() {
       form.append("text", t.text.value);
       form.append("image", image);
       form.append("imageLabel", "");
-      const success = await addPost(form).unwrap();
-
-      if(success) {
-        router.back();
-      }
-      else {
-        alert("Failed to add blog post");
-      }
+      
+      addPost(form);
     }
+  }
+  if(addPostResult.isSuccess){
+    addPostResult.data ? router.push(`/${router.query.username}`) : alert("Failed to add blog post");
   }
 
   if(isFetching){

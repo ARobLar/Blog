@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -32,6 +33,7 @@ namespace Blog
             services.AddControllersWithViews();
 
             services.AddDbContext<BlogDbContext>();
+
             services.AddIdentity<BlogUserEntity, IdentityRole>()
                 .AddEntityFrameworkStores<BlogDbContext>()
                 .AddRoles<IdentityRole>();
@@ -113,7 +115,7 @@ namespace Blog
 
         #region Private methods
 
-        private async Task CreateRoles(IServiceProvider serviceProvider)
+        private static async Task CreateRoles(IServiceProvider serviceProvider)
         {
             //initializing custom roles 
             var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();

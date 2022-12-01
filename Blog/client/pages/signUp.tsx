@@ -14,6 +14,7 @@ import Container from "@mui/material/Container";
 import { useRouter } from 'next/router';
 import theme from "../src/theme";
 import { useGetCurrentUserQuery, useSignUpMutation } from "../src/api/apiSlice";
+import Box from "@mui/material/Box";
 
 const useStyles = makeStyles({
   "@global": {
@@ -51,11 +52,10 @@ export default function SignUp() {
     event.preventDefault();
     const t = event.target;
     
-    
     const success = await signUpRequest({
       role: "Member",
       email: t.email.value, 
-      username: t.name.value, 
+      username: t.username.value, 
       password: t.password.value
     }).unwrap();
     
@@ -85,7 +85,7 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate onSubmit={handleOnSubmit}>
+        <Box component="form" className={classes.form} onSubmit={handleOnSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -96,6 +96,7 @@ export default function SignUp() {
                 fullWidth
                 id="username"
                 label="Username"
+                inputProps= {{maxLength: "15"}}
                 autoFocus
               />
             </Grid>
@@ -122,12 +123,12 @@ export default function SignUp() {
                 autoComplete="current-password"
               />
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <FormControlLabel
                 control={<Checkbox value="allowExtraEmails" color="primary" />}
                 label="I want to receive inspiration, marketing promotions and updates via email."
               />
-            </Grid>
+            </Grid> */}
           </Grid>
           <Button
             type="submit"
@@ -140,12 +141,12 @@ export default function SignUp() {
           </Button>
           <Grid container>
             <Grid item>
-              <Link href="/SignIn" variant="body2">
+              <Button onClick={() => {router.push("/signIn")}} variant="text">
                 Already have an account? Sign in
-              </Link>
+              </Button>
             </Grid>
           </Grid>
-        </form>
+        </Box>
       </div>
     </Container>
   );

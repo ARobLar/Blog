@@ -30,7 +30,7 @@ export default function PaginatedPostGrid({itemsPerPage = 4}){
     <div>
       <Grid container spacing={3}>
         {pagePostCards.map((postCard) => (
-          <Grid key={postCard.id} item xs={6} sm={3} md={3}>
+          <Grid key={postCard.id} item xs={3}>
             <PostCard post={postCard} isAuthor={isAuthor} />
           </Grid>
         ))}
