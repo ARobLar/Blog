@@ -8,9 +8,9 @@ Blog
 3. Open the commandprompt and go to the "/Blog" directory (same directory as the Blog.csproj file)
    - Install "concurrently" by running:  
    "npm install concurrently"
-   - Enter into the "/client" directory and install the following dependencies:
+   - Enter into the "/client" directory and install the following dependencies:  
    "npm install @mui/material @emotion/react @emotion/styled @mui/styles @mui/icons-material @reduxjs/toolkit react-redux"
-   - there may be problems with the dependency tree, if so, try running with --legacy-peer-deps:
+   - there may be problems with the dependency tree, if so, try running with --legacy-peer-deps:  
    "npm install --legacy-peer-deps @mui/material @emotion/react @emotion/styled @mui/styles @mui/icons-material @reduxjs/toolkit react-redux"
    
 4. The client and server can be started in two ways:
