@@ -2,7 +2,7 @@
 Blog
 
 1. Take home the entire repo
-2. To utilize the existing database, the path to it must first be set correctly,
+2. To utilize the existing database, the path to it must first be set correctly,  
    this can be done with the connectionstring found in the appsettings.json -> Connectionstrings:database
 
 3. Open the commandprompt and go to the "/Blog" directory (same directory as the Blog.csproj file)
@@ -15,13 +15,13 @@ Blog
    
 4. The client and server can be started in two ways:
 
-  A. Run the following command in the Blog project directory: "npm run start"
+  A. Run the following command in the Blog project directory: "npm run start"  
       - This will run the client application and the server simultaneously
 
-  B. Enter the client directory and run command: "npm run dev" to start the client application
+  B. Enter the client directory and run command: "npm run dev" to start the client application  
      Go to the Blog project directory and enter "dotnet run" to start the server
 
-5. This should open up your default browser at "https://localhost:5001", rendering the main page of the website
+5. This should open up your default browser at "https://localhost:5001", rendering the main page of the website  
    If the browser doesn't open automatically, enter the above url manually.
 
 
