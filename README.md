@@ -24,8 +24,9 @@ Blog
 5. This should open up your default browser at "https://localhost:5001", rendering the main page of the website  
    If the browser doesn't open automatically, enter the above url manually.
 
-
-
+6. For testing the API endpoints, swagger has been implemented and can be checked out when server is running at:   
+   "https://localhost:5001/swagger/index.html"
+  
 
 In the root folder (/Blog) you will find the database (Blog.db) having a few users added with different user roles ("Member" and "Admin") and blog posts.
 
