@@ -21,6 +21,7 @@ const useStyles = makeStyles({
 		alignItems: "center",
 		color: "#000",
 		fontSize: "4rem",
+    margin: "0px -8px",
 		[theme.breakpoints.down("sm")]: {
 			height: 300,
 			fontSize: "3em"

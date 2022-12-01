@@ -18,6 +18,9 @@ const useStyles = makeStyles({
 		alignItems: "center",
 		color: "#000",
 		fontSize: "5rem",
+    // marginRight: "-8px",
+    // marginLeft: "-8px",
+    margin: "0px -8px",
 		[theme.breakpoints.down("sm")]: {
 			height: 200,
 			fontSize: "3em"
