@@ -1,5 +1,4 @@
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import makeStyles from '@mui/styles/makeStyles';
 import Box from '@mui/material/Box';
 import { useGetPostQuery } from '../../../../src/api/apiSlice';

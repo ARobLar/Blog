@@ -8,9 +8,37 @@ import HomeIcon from '@mui/icons-material/Home';
 import Box from '@mui/material/Box';
 import { useRouter } from 'next/router';
 import { useGetCurrentUserQuery, useSignOutMutation } from '../api/apiSlice';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, styled } from '@mui/material';
+import theme from '../theme';
+import makeStyles from '@mui/styles/makeStyles';
+
+const useStyles = makeStyles({
+  title:{
+    flexGrow: 1, 
+    fontSize: "2vw",
+    [theme.breakpoints.only("xs")]: {
+      display: 'none'
+    }
+  }
+})
+
+const NavButton = styled(Button)(() => ({
+  fontSize: "16px",
+  [theme.breakpoints.only("xs")]: {
+    fontSize: "10px",
+    marginLeft: "-10px",
+    paddingLeft: "-10px"
+  },
+  [theme.breakpoints.only("sm")]: {
+    fontSize: "10px"
+  },
+  [theme.breakpoints.only("md")]: {
+    fontSize: "12px"
+  },
+}));
 
 export default function Navigationbar() {
+  const classes = useStyles();
   const router = useRouter();
   const {data: user, isSuccess} = useGetCurrentUserQuery();
   const [signOutRequest, signOutResult] = useSignOutMutation();
@@ -27,10 +55,10 @@ export default function Navigationbar() {
     <>
       <AppBar>
         <Toolbar>
-          <IconButton href="/" size='large' edge='start' color='inherit' aria-label='logo'>
+          <IconButton onClick={()=>(router.push('/'))} size='large' edge='start' color='inherit' aria-label='logo'>
             <HomeIcon/>
           </IconButton>
-          <Typography variant='h6' component='div' sx={{ flexGrow: 1}}>
+          <Typography className={classes.title} >
             Bloggalicious
           </Typography>
           <Stack direction='row' spacing={2}>
@@ -39,19 +67,19 @@ export default function Navigationbar() {
             {signOutResult.isError && 
               <Typography>Failed to log out</Typography>}
             {isSuccess && user && user.role == "Admin" &&
-              <Button onClick={() => (router.push(`/admin`))} color='inherit'>Admin</Button>
+              <NavButton onClick={() => (router.push(`/admin`))} color='inherit'>Admin</NavButton>
             }
             {isSuccess && user &&
               <>
-                <Button onClick={() => (router.push(`/${user.username}/post/add`))} color='inherit' >New Post</Button>
-                <Button onClick={() => (router.push(`/${user.username}`))} color='inherit'>My Page</Button>
-                <Button onClick={handleSignOut} color='inherit'>Sign out</Button>
+                <NavButton onClick={() => (router.push(`/${user.username}/post/add`))} color='inherit' >New Post</NavButton>
+                <NavButton onClick={() => (router.push(`/${user.username}`))} color='inherit'>My Page</NavButton>
+                <NavButton onClick={handleSignOut} color='inherit'>Sign out</NavButton>
               </>
             }
             {!user &&
               <>
-                <Button onClick={() => (router.push('/signUp'))} color='inherit'>Sign up</Button>
-                <Button onClick={() => (router.push('/signIn'))} color='inherit'>Sign in</Button>
+                <NavButton onClick={() => (router.push('/signUp'))} color='inherit'>Sign up</NavButton>
+                <NavButton onClick={() => (router.push('/signIn'))} color='inherit'>Sign in</NavButton>
               </>
             }
           </Stack>
