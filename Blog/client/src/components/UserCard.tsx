@@ -7,31 +7,14 @@ import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles"
 import { useRouter } from "next/router";
 import { featuredUser } from "../interfaces/types";
-
-
-const useStyles = makeStyles({
-  card: {
-    maxWidth: "100%",
-    alignItems: 'center'
-  },
-  media: {
-    height: '120px',
-    maxWidth: '120px',
-    borderRadius: '50%',
-  },
-  cardActions: {
-    display: "flex",
-    margin: "0 10px",
-    justifyContent: "space-between"
-  },
- })
+import { useCardStyles } from "../styles/overviewPageStyles";
 
 interface UserCardProps{
   user : featuredUser;
 }
 
 export default function UserCard(props : UserCardProps) {
-  const classes = useStyles();
+  const classes = useCardStyles();
   const router = useRouter();
   const { user } = props;
 
@@ -43,10 +26,10 @@ export default function UserCard(props : UserCardProps) {
         image={user.avatarSource}
         title={user.avatarLabel}
         />
-        <CardContent>
-        <Typography gutterBottom variant="h5" component="h2">
-          {user.username}
-        </Typography>
+        <CardContent className={classes.content}>
+          <Typography className={classes.title}>
+            {user.username}
+          </Typography>
         </CardContent>
       </CardActionArea>
     </Card>

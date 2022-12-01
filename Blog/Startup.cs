@@ -1,11 +1,20 @@
+using Blog.Controllers;
+using Blog.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Blog
 {
@@ -23,6 +32,28 @@ namespace Blog
         {
             services.AddControllersWithViews();
 
+            services.AddDbContext<BlogDbContext>();
+
+            services.AddIdentity<BlogUserEntity, IdentityRole>()
+                .AddEntityFrameworkStores<BlogDbContext>()
+                .AddRoles<IdentityRole>();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Blog API",
+                    Description = "API for the Blog backend",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Robin Larsson",
+                        Email = "robinlarsson.94@hotmail.com",
+                    },
+                });
+            });
+            services.AddSingleton<IConfiguration>(Configuration);
+
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -31,7 +62,7 @@ namespace Blog
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -44,11 +75,27 @@ namespace Blog
                 app.UseHsts();
             }
 
+            CreateRoles(serviceProvider).Wait();
+            CreateDefaultAdmin(serviceProvider).Wait();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, Configuration["FileStorage:PostImagePath"])),
+                RequestPath = "/" + Configuration["FileStorage:PostImagePath"]
+            });
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
+
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
@@ -65,5 +112,53 @@ namespace Blog
                 }
             });
         }
+
+        #region Private methods
+
+        private static async Task CreateRoles(IServiceProvider serviceProvider)
+        {
+            //initializing custom roles 
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            string[] roleNames = { "Admin", "Member" };
+            IdentityResult roleResult;
+
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+
+                if (!roleExist)
+                {
+                    roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+        }
+
+        private async Task CreateDefaultAdmin(IServiceProvider serviceProvider)
+        {
+            var UserManager = serviceProvider.GetRequiredService<UserManager<BlogUserEntity>>();
+            //Create default Admin
+            var admin = new BlogUserEntity
+            {
+                UserName = Configuration["DefaultAdmin:Username"],
+                Email = Configuration["DefaultAdmin:Email"],
+                AvatarLabel = Configuration["DefaultAdmin:AvatarLabel"],
+                AvatarSource = Configuration["DefaultAdmin:AvatarSource"]
+            };
+
+            string adminPWD = Configuration["DefaultAdmin:Password"];
+            var _admin = await UserManager.FindByEmailAsync(Configuration["DefaultAdmin:Email"]);
+
+            if (_admin == null)
+            {
+                var createPowerUser = await UserManager.CreateAsync(admin, adminPWD);
+                if (createPowerUser.Succeeded)
+                {
+                    await UserManager.AddToRoleAsync(admin, "Admin");
+
+                }
+            }
+        }
+        #endregion
+
     }
 }
