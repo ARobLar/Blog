@@ -59,7 +59,7 @@ export default function Navigationbar() {
             <HomeIcon/>
           </IconButton>
           <Typography className={classes.title} >
-            Bloggalicious
+            {user ? user.username : "Bloggalicious" }
           </Typography>
           <Stack direction='row' spacing={2}>
             {signOutResult.isLoading && 
