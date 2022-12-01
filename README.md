@@ -18,6 +18,8 @@ Blog
    If the browser doesn't open automatically, enter the above url manually.
 
 
+
+
 In the root folder (/Blog) you will find the database (Blog.db) having a few users added with different user roles ("Member" and "Admin") and blog posts.
 
 - Default Admin can be accessed with:
@@ -29,7 +31,10 @@ In the root folder (/Blog) you will find the database (Blog.db) having a few use
    - Password:  Member.123
 
 
-The website consists of the following pages at endpoints ( ):
+
+
+**The website consists of the following pages at endpoints ( ):**
+
 
 Home page   **(/)**               : Displays all users
 
