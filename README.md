@@ -27,3 +27,17 @@ In the root folder (/Blog) you will find the database (Blog.db) having a few use
 - A user with multiple blog posts already added can be accessed via:
    - Username:  testMember
    - Password:  Member.123
+
+
+The website consists of the following pages at endpoints ( ):
+
+Home page   (/)               : Displays all users
+Sign Up     (/signUp)         : allows a non logged-in user to sign up
+Sign In     (/signIn)         : allows a user to log in 
+Admin page  (/admin)          : Shows all existing users and allows to register new user with specified role. Only accessible for admin users.
+Member page (/[username])     : home page of a blog user
+Add post    (/[username]/post/add)        : Allows logged in user to add post
+Edit post   (/[username]/post/edit/[id])  : Allows author to edit post
+Show post   (/[username]/post/show/[id])  : Shows post of given id
+
+On top is a Nagivationbar with a home button, and buttons to access each of the above pages (except for showing/editing a specific post)
