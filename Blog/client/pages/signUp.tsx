@@ -55,7 +55,7 @@ export default function SignUp() {
     const success = await signUpRequest({
       role: "Member",
       email: t.email.value, 
-      username: t.name.value, 
+      username: t.username.value, 
       password: t.password.value
     }).unwrap();
     
