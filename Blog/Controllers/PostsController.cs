@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
@@ -72,7 +71,7 @@ namespace Blog.Controllers
                 return null;
             }
 
-            var postCards = _context.Posts.Where(p => p.UserId == user.Id)
+            var postCards = _context.Posts.Where(p => p.UserId == user.Id && p.Deleted == false)
                 .Select(p => new OutPostDto
                 {
                     Id = p.Id.ToString(),
