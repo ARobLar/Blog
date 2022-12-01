@@ -52,7 +52,6 @@ export default function SignUp() {
     event.preventDefault();
     const t = event.target;
     
-    
     const success = await signUpRequest({
       role: "Member",
       email: t.email.value, 
@@ -97,6 +96,7 @@ export default function SignUp() {
                 fullWidth
                 id="username"
                 label="Username"
+                inputProps= {{maxLength: "15"}}
                 autoFocus
               />
             </Grid>

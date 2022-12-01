@@ -54,7 +54,7 @@ export default function SignIn() {
     const t = event.target;
     
     signInRequest({
-      username : t.name.value,
+      username : t.username.value,
       password : t.password.value,
       rememberMe : t.remember.checked
     });
@@ -91,14 +91,15 @@ export default function SignIn() {
           </Typography>
           <Box component="form" className={classes.form} onSubmit={handleOnSubmit}>
             <TextField
-              id="name"
-              name="name"
-              label="Name"
-              autoComplete="name"
+              id="username"
+              name="username"
+              label="Username"
+              autoComplete="username"
               variant="outlined"
               margin="normal"
               required
               fullWidth
+              inputProps= {{maxLength: "15"}}
               autoFocus
               />
             <TextField
