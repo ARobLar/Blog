@@ -5,10 +5,17 @@ Blog
 2. To utilize the existing database, the path to it must first be set correctly,
    this can be done with the connectionstring found in the appsettings.json -> Connectionstrings:database
 
-3. Open the commandprompt and go to the Blog project directory (same directory as the Blog.csproj file)
+3. Open the commandprompt and go to the "/Blog" directory (same directory as the Blog.csproj file)
+   - Install "concurrently" by running:  
+   "npm install concurrently"
+   - Enter into the "/client" directory and install the following dependencies:
+   "npm install @mui/material @emotion/react @emotion/styled @mui/styles @mui/icons-material @reduxjs/toolkit react-redux"
+   - there may be problems with the dependency tree, if so, try running with --legacy-peer-deps:
+   "npm install --legacy-peer-deps @mui/material @emotion/react @emotion/styled @mui/styles @mui/icons-material @reduxjs/toolkit react-redux"
+   
 4. The client and server can be started in two ways:
 
-  A. Run the command: "npm run start"
+  A. Run the following command in the Blog project directory: "npm run start"
       - This will run the client application and the server simultaneously
 
   B. Enter the client directory and run command: "npm run dev" to start the client application
