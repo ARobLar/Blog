@@ -55,7 +55,6 @@ namespace Blog.Controllers
                 if (res.Succeeded)
                 {
                     await userManager.AddToRoleAsync(user, userInfo.Role);
-                    await signInManager.SignInAsync(user, isPersistent: false);
 
                     result = "success";
                 }
