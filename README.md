@@ -6,7 +6,7 @@ Blog
    this can be done with the connectionstring found in the appsettings.json -> Connectionstrings:database
 
 3. Open the commandprompt and go to the "/Blog" directory (same directory as the Blog.csproj file)
-   - Install "concurrently" by running:  
+   - Install "concurrently" by running (only required for 4.A):  
    "npm install concurrently"
    - Enter into the "/client" directory and install the following dependencies:  
    "npm install @mui/material @emotion/react @emotion/styled @mui/styles @mui/icons-material @reduxjs/toolkit react-redux"
@@ -16,7 +16,7 @@ Blog
    
 4. The client and server can be started in two ways:
 
-  A. Run the following command in the Blog project directory: "npm run start"  
+  A. Run the following command in the Blog project directory (uses concurrently): "npm run start"  
       - This will run the client application and the server simultaneously
 
   B. Enter the client directory and run command: "npm run dev" to start the client application  
