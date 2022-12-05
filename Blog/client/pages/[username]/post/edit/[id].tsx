@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import { useGetCurrentUserQuery, useGetPostQuery, useUpdatePostMutation } from "../../../../src/api/apiSlice";
 import { hostBaseUrl } from "../../../../src/CONSTANTS";
 import PostForm from "../../../../src/components/PostForm";
-import { useFormStyles } from "../../../../src/styles/formStyles";
+import { usePostFormStyles } from "../../../../src/styles/formStyles";
 
 export default function HandlePost() {
-  const classes = useFormStyles();
+  const classes = usePostFormStyles();
   const router = useRouter();
   const { id } = router.query;
   const [updatePost] = useUpdatePostMutation();

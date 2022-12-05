@@ -54,54 +54,52 @@ export default function PostForm(props : PostFormProps){
   }
 
   return(
-    <div className={classes.paper}>
-      <Box component="form" className={classes.form} onSubmit={handleOnSubmit}>
-        <TextField
-          id="title"
-          name="Title"
-          label="Title"
-          defaultValue={initialValues.title }
-          autoComplete="title"
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          autoFocus
-          />
-        {imageUrl && (
-          <Box mt={3}>
-            <img src={imageUrl} alt={image? image.name : initialValues.imageLabel} height="200px" />
-          </Box> )}
-        <input
-          accept="image/*"
-          type="file"
-          onChange={handleImageUpload}
-          />
-        <TextField
-          id="text"
-          name="Text"
-          label="Text"
-          defaultValue={initialValues.text}
-          autoComplete="text"
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          autoFocus
-          multiline
-          rows={10}
-          />
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          className={classes.submit}
-          >
-          Post
-        </Button>
-        <Button onClick={ () => {router.back()} }>Cancel</Button>
-      </Box>
-    </div>
+    <Box component="form" className={classes.form} onSubmit={handleOnSubmit}>
+      <TextField
+        id="title"
+        name="Title"
+        label="Title"
+        defaultValue={initialValues.title }
+        autoComplete="title"
+        variant="outlined"
+        margin="normal"
+        required
+        fullWidth
+        autoFocus
+        />
+      {imageUrl && (
+        <Box mt={3}>
+          <img src={imageUrl} alt={image? image.name : initialValues.imageLabel} height="200px" />
+        </Box> )}
+      <input
+        accept="image/*"
+        type="file"
+        onChange={handleImageUpload}
+        />
+      <TextField
+        id="text"
+        name="Text"
+        label="Text"
+        defaultValue={initialValues.text}
+        autoComplete="text"
+        variant="outlined"
+        margin="normal"
+        required
+        fullWidth
+        autoFocus
+        multiline
+        rows={10}
+        />
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        color="primary"
+        className={classes.submit}
+        >
+        Post
+      </Button>
+      <Button onClick={ () => {router.back()} }>Cancel</Button>
+    </Box>
   )
 }
