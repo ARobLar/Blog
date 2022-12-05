@@ -1,11 +1,9 @@
-import React, { useState } from "react";
-import Button from "@mui/material/Button";
+import React from "react";
 import { makeStyles } from "@mui/styles";
 import { useRouter } from "next/router";
-import TextField from '@mui/material/TextField';
 import theme from "../../../src/theme";
-import Box from "@mui/material/Box";
 import { useAddPostMutation, useGetCurrentUserQuery } from "../../../src/api/apiSlice";
+import PostForm from "../../../src/components/PostForm";
 
 const useStyles = makeStyles({
     paper: {
@@ -29,38 +27,11 @@ export default function AddPost() {
   const [addPost, addPostResult] = useAddPostMutation();
   const { data: user, isFetching, isSuccess } = useGetCurrentUserQuery();
   const isCurrentUser = (user != undefined) && (user.username == router.query.username);
-  const [image, setImage] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  function handleImageUpload(event) {
-    const t = event.target;
-
-    if(t.files != null && t.files[0] != null){
-      const img = t.files[0];
-      setImage(img);
-      setImageUrl(URL.createObjectURL(img));
-    }
+  async function handleOnSubmit(form : FormData) {      
+    addPost(form);
   }
 
-  async function handleOnSubmit(event) {
-    event.preventDefault();
-    const t = event.target;
-
-    if(image == null){
-      alert("You forgot to add an image");
-    }
-    else{
-
-      const form = new FormData();
-      form.append("title", t.title.value);
-      form.append("creationTime", new Date().toLocaleString());
-      form.append("text", t.text.value);
-      form.append("image", image);
-      form.append("imageLabel", "");
-      
-      addPost(form);
-    }
-  }
   if(addPostResult.isSuccess){
     addPostResult.data ? router.push(`/${router.query.username}`) : alert("Failed to add blog post");
   }
@@ -74,53 +45,7 @@ export default function AddPost() {
   
   return (
     <div className={classes.paper}>
-      <form className={classes.form} onSubmit={handleOnSubmit}>
-        <TextField
-          id="title"
-          name="Title"
-          label="Title"
-          autoComplete="title"
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          autoFocus
-        />
-        {imageUrl && image && (
-          <Box mt={3}>
-            <img src={imageUrl} alt={image.name} height="200px" />
-          </Box>
-        )}
-        <input
-          accept="image/*"
-          type="file"
-          onChange={handleImageUpload}
-          required
-        />
-        <TextField
-          id="text"
-          name="Text"
-          label="Text"
-          autoComplete="text"
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          autoFocus
-          multiline
-          rows={10}
-        />
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          className={classes.submit}
-          >
-          Post
-        </Button>
-        <Button onClick={ () => {router.back()} }>Cancel</Button>
-      </form>
+      <PostForm onSubmit={handleOnSubmit}/>
     </div>
   );
 }
