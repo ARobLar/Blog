@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { postFormData } from "../interfaces/types";
-import { useFormStyles } from "../styles/formStyles";
+import { usePostFormStyles } from "../styles/formStyles";
 
 interface PostFormProps{
   initialValues? : postFormData;
@@ -19,7 +19,7 @@ const defaultProps : postFormData = {
 }
 
 export default function PostForm(props : PostFormProps){
-  const classes = useFormStyles()
+  const classes = usePostFormStyles()
   const router = useRouter()
   const { initialValues=defaultProps, onSubmit } = props;
 

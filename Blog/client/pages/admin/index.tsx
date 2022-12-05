@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useGetCurrentUserQuery } from "../../src/api/apiSlice";
-import RegistrationForm from "../../src/components/admin/RegistrationForm";
+import AdminRegistrationForm from "../../src/components/admin/AdminRegistrationForm";
 import UserTable from "../../src/components/admin/UserTable";
 
 export default function Admin(){
@@ -19,7 +19,7 @@ export default function Admin(){
 
     return(
       <>
-        <RegistrationForm/>
+        <AdminRegistrationForm/>
         <UserTable/>
       </>
     );
