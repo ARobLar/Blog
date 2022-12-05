@@ -22,3 +22,10 @@ export type authUser = {
   username : string
   loggedIn : boolean
 }
+
+export type postFormData = {
+  title : string
+  imageUrl : string
+  imageLabel : string
+  text : string
+}
