@@ -1,5 +1,5 @@
 # Blog
-Blog
+This Blog project was built using ASP.Net 5, Entity framework, Sqlite, identity Framework, Nextjs, redux, Material UI
 
 1. Take home the entire repo
 2. To utilize the existing database, the path to it must first be set correctly,  
