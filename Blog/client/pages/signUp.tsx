@@ -13,6 +13,7 @@ import { useGetCurrentUserQuery, useSignUpMutation } from "../src/api/apiSlice";
 import RegistrationForm from "../src/components/RegistrationForm";
 import { signUpUserDto } from "../src/interfaces/dto";
 import AwaitingApi from "../src/components/AwaitingApi";
+import Box from "@mui/material/Box";
 
 const useStyles = makeStyles({
   "@global": {
@@ -36,41 +37,46 @@ const useStyles = makeStyles({
 export default function SignUp() {
   const classes = useStyles();
   const router = useRouter();
-  const [signUpRequest, signUpResult] = useSignUpMutation();
+  const [ signUpRequest, 
+          {data: signUpSuccess, 
+          isLoading: signingUp, 
+          isSuccess: signedUp, 
+          isError : signUpError,
+          status : signUpStatus}] = useSignUpMutation();
   const { data: user, 
           isFetching: isFetchingUser, 
-          isSuccess: isSuccessUser} = useGetCurrentUserQuery();
+          isSuccess: userRetreived} = useGetCurrentUserQuery();
 
   async function handleOnSubmit(userData : signUpUserDto){
     signUpRequest(userData);
   }
   
-  if(signUpResult.isLoading){
+  if(signingUp){
     return <AwaitingApi>Registering..</AwaitingApi>
   }
-  else if(signUpResult.isSuccess){
-    signUpResult.data ? 
+  else if(signedUp){
+    signUpSuccess ? 
     router.push('/') : 
     alert(`You did not get registered, 
           could be due to already exisiting username 
           or invalid password, make sure to include a small & capital letter, a number, and special character`);
   }
-  else if(signUpResult.isError){
-    alert(`Failed to register: "${signUpResult.status}"`)
+  else if(signUpError){
+    alert(`Failed to register: "${signUpStatus}"`)
   }
 
   if(isFetchingUser){
     return <AwaitingApi>Loading..</AwaitingApi>
   }
 
-  if(isSuccessUser && user){
+  if(userRetreived){
     router.push(`/${user.username}`);
   }
   
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <div className={classes.paper}>
+      <Box component="div" className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
@@ -85,7 +91,7 @@ export default function SignUp() {
             </Button>
           </Grid>
         </Grid>
-      </div>
+      </Box>
     </Container>
   );
 }

@@ -13,9 +13,9 @@ export default function PaginatedPostGrid({itemsPerPage = 4}){
   const router = useRouter()
   const queryUsername = router.query.username as string;
   const { data: postCards, isFetching, isError, refetch} = useGetPostCardsQuery(queryUsername);
-  const { data: user } = useGetCurrentUserQuery();
+  const { data: user, isSuccess : userRetreived } = useGetCurrentUserQuery();
   
-  const isAuthor = (user != undefined) && (user.username == queryUsername);
+  const isAuthor = userRetreived ? (user.username == queryUsername) : false;
 
   if(isFetching)
   {

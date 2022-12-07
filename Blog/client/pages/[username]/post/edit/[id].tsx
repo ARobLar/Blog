@@ -11,22 +11,16 @@ export default function HandlePost() {
   const classes = usePostFormStyles();
   const router = useRouter();
   const { id } = router.query;
-  const [updatePost] = useUpdatePostMutation();
-  const {data: post, isFetching, isSuccess } = useGetPostQuery(id as string);
-  const { data: user, isSuccess: isSuccessUser } = useGetCurrentUserQuery();
-  const isCurrentUser = (user != undefined) && (user.username == router.query.username);
+  const [updatePostRequest, {data: postUpdated, isSuccess: postUpdateSuccess}] = useUpdatePostMutation();
+  const { data: post, isFetching, isSuccess } = useGetPostQuery(id as string);
+  const { data: user, isSuccess: userRetreived } = useGetCurrentUserQuery();
+  const isCurrentUser = userRetreived && (user.username == router.query.username);
 
   async function handleOnSubmit(data : FormData) {
-    
-    let success = false;
-    success = await updatePost({post : data, id: id as string}).unwrap();
-
-    if(success) {
-      router.back();
-    }
+    updatePostRequest({post : data, id: id as string});
   }
   
-  if(isSuccessUser && !isCurrentUser){
+  if(!isCurrentUser || (postUpdateSuccess && postUpdated)){
     router.back();
   }
 

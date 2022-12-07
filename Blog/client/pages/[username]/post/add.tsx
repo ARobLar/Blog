@@ -22,10 +22,10 @@ export default function AddPost() {
   const [addPostRequest, addPostResult] = useAddPostMutation();
   const { data: user, 
           isFetching : isFetchingCurrentUser, 
-          isSuccess : isSuccessCurrentUser,
+          isSuccess : userRetreived,
           isError : isErrorCurrentUser,
           refetch : refetchCurrentUser } = useGetCurrentUserQuery();
-  const isCurrentUser = (user != undefined) && (user.username == router.query.username);
+  const isCurrentUser = userRetreived && (user.username == router.query.username);
 
   async function handleOnSubmit(form : FormData) {      
     addPostRequest(form);
@@ -43,7 +43,7 @@ export default function AddPost() {
   if(isFetchingCurrentUser){
     return <AwaitingApi>Checking user credentials..</AwaitingApi>
   }
-  else if(isSuccessCurrentUser && !isCurrentUser){
+  else if(!isCurrentUser){
     router.back();
   }
   else if(isErrorCurrentUser){

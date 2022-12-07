@@ -1,6 +1,7 @@
 ﻿using Blog.Dto;
 using Blog.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -26,23 +27,43 @@ namespace Blog.Controllers
             this._roleManager = roleManager;
         }
 
-        [HttpGet("current")]
-        public UserDto GetCurrentUser()
+        [HttpGet("test/current/{choice}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<bool> GetCurrentTest(int choice)
         {
-            if(!User.Identity.IsAuthenticated)
+            if(choice == 1)
             {
-                return null;
+                return NotFound();
+            }
+            if (choice == 2)
+            {
+                return NoContent();
+            }
+            if (choice == 3)
+            {
+                return Ok(false);
             }
 
+            return Ok(true);
+        }
+
+        [HttpGet("current")]
+        [Authorize]
+        public UserDto GetCurrentUser()
+        {
             var userEntity = _userManager.FindByNameAsync(User.Identity.Name).Result;
 
-            return new UserDto
-                {
-                    Id = userEntity.Id,
-                    Username = userEntity.UserName,
-                    Role = _userManager.GetRolesAsync(userEntity).Result[0],
-                    Email = userEntity.Email,
-                };
+            var user = new UserDto
+            {
+                Id = userEntity.Id,
+                Username = userEntity.UserName,
+                Role = _userManager.GetRolesAsync(userEntity).Result[0],
+                Email = userEntity.Email
+            };
+
+            return user;
         }
 
         [HttpGet("all/cards")]

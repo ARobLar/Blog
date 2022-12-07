@@ -4,27 +4,37 @@ import { useGetCurrentUserQuery } from "../../src/api/apiSlice";
 import AdminRegistrationForm from "../../src/components/admin/AdminRegistrationForm";
 import UserTable from "../../src/components/admin/UserTable";
 import AwaitingApi from "../../src/components/AwaitingApi";
-import FetchUsersFailure from "../../src/components/FetchErrorManualRefetch";
+import FetchErrorManualRefetch from "../../src/components/FetchErrorManualRefetch";
 
 export default function Admin(){
   const router = useRouter();
-  const {data: user, isFetching, isError, refetch, error} = useGetCurrentUserQuery();
+  const { data: user, 
+          isFetching, 
+          isSuccess: userRetreived, 
+          isError, 
+          refetch, 
+          error} = useGetCurrentUserQuery();
 
   if(isFetching){
     return(<AwaitingApi>Loading..</AwaitingApi>)
   }
   else if(isError){
-    return(<FetchUsersFailure refetch={refetch} error={error}/>)
+    return(
+      <FetchErrorManualRefetch refetch={refetch}>
+        Failed to check for authorization
+      </FetchErrorManualRefetch>
+    );
   }
 
-  if(!user || user.role != "Admin"){
+  if(userRetreived && user.role == "Admin"){
+    return(
+      <Box>
+        <AdminRegistrationForm/>
+        <UserTable/>
+      </Box>
+    );
+  }
+  else{
     router.back();
   }
-
-  return(
-    <Box>
-      <AdminRegistrationForm/>
-      <UserTable/>
-    </Box>
-  );
 }
