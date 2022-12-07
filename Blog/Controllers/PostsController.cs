@@ -209,26 +209,48 @@ namespace Blog.Controllers
 
         [HttpDelete("{id}")]
         [Authorize]
-        public bool Delete(string id) 
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status410Gone)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+        public ActionResult Delete(string id) 
         {
 
             if (!int.TryParse(id, out int postId))
-            {
-                return false;
+            {   //Not a number
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, id);
             }
 
             var post = _context.Posts.FirstOrDefault(p => p.Id == postId);
 
-            if (post != null && IsAuthor(post.UserId))
+            if (post == null)
+            {   // Invalid user Id
+                return NotFound();
+            }
+            if (post.Deleted)
+            {   // User already deleted
+                return StatusCode(StatusCodes.Status410Gone);
+            }
+            if (!IsAuthor(post.UserId))
+            {   //Unauthorized user
+                return Unauthorized();
+            }
+
+            try
             {
                 post.Deleted = true;
+
                 _context.Update(post);
                 _context.SaveChanges();
 
-                return true;
+                return NoContent();
             }
-
-            return false;
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
 
