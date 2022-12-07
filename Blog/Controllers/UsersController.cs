@@ -16,16 +16,10 @@ namespace Blog.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserManager<BlogUserEntity> _userManager;
-        private readonly SignInManager<BlogUserEntity> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UsersController(UserManager<BlogUserEntity> userManager,
-                                SignInManager<BlogUserEntity> signInManager,
-                                RoleManager<IdentityRole> roleManager)
+        public UsersController(UserManager<BlogUserEntity> userManager)
         {
             this._userManager = userManager;
-            this._signInManager = signInManager;
-            this._roleManager = roleManager;
         }
 
         [HttpGet("test/current/{choice}")]
@@ -136,7 +130,7 @@ namespace Blog.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status410Gone)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
         public ActionResult DeleteUser(string userId)
         {
             var user = _userManager.FindByIdAsync(userId).Result;
