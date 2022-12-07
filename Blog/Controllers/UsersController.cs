@@ -83,16 +83,13 @@ namespace Blog.Controllers
         }
 
         [HttpPost("create")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type=typeof(string))]
         public async Task<ActionResult> Create([FromBody] SignUpUserDto userInfo)
         {
-            //Enforce a member role
-            userInfo.Role = "Member";
-
-            if (_userManager.FindByNameAsync(userInfo.Username) == null)
-            {
+            if (_userManager.FindByNameAsync(userInfo.Username) != null)
+            {   // User already exists
                 return new ConflictResult();
             }
 
@@ -112,9 +109,10 @@ namespace Blog.Controllers
 
                 if (res.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, userInfo.Role);
+                    //Enforce the Member role
+                    await _userManager.AddToRoleAsync(user, "Member");
 
-                    return new OkResult();
+                    return NoContent();
                 }
                 else
                 {
@@ -135,20 +133,53 @@ namespace Blog.Controllers
 
         [HttpDelete("{usedId}")]
         [Authorize]
-        public bool DeleteUser(string userId)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status410Gone)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult DeleteUser(string userId)
         {
             var user = _userManager.FindByIdAsync(userId).Result;
 
-            if (user == null || User.Identity.Name != user.UserName)
-            {
-                return false;
+            if (user == null)
+            {   // Invalid user Id
+                return NotFound();
+            }
+            if (user.Deleted)
+            {   // User already deleted
+                return StatusCode(StatusCodes.Status410Gone);
+            }
+            if (User.Identity.Name != user.UserName)
+            {   //Unauthorized user
+                return Unauthorized();
             }
 
-            user.Deleted = true;
+            var errors = string.Empty;
+            try
+            {
+                user.Deleted = true;
 
-            var res = _userManager.UpdateAsync(user).Result;
+                var res = _userManager.UpdateAsync(user).Result;
 
-            return res.Succeeded;
+                if (res.Succeeded)
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    foreach (var error in res.Errors)
+                    {
+                        errors += string.Format("{0} : {1}\n", error.Code, error.Description);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                errors += ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError, errors);
         }
     }
 }
