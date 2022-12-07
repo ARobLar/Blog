@@ -14,6 +14,8 @@ export type userDto = {
 }
 
 export type signUpUserDto = {
+  avatarLabel : string
+  avatarSource : string
   role : string
   email : string
   username : string

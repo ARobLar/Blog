@@ -14,6 +14,7 @@ import RegistrationForm from "../src/components/RegistrationForm";
 import { signUpUserDto } from "../src/interfaces/dto";
 import AwaitingApi from "../src/components/AwaitingApi";
 import Box from "@mui/material/Box";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 
 const useStyles = makeStyles({
   "@global": {
@@ -38,39 +39,34 @@ export default function SignUp() {
   const classes = useStyles();
   const router = useRouter();
   const [ signUpRequest, 
-          {data: signUpSuccess, 
-          isLoading: signingUp, 
+          {isLoading: signingUp, 
           isSuccess: signedUp, 
-          isError : signUpError,
-          status : signUpStatus}] = useSignUpMutation();
+          isError: signUpError,
+          error}] = useSignUpMutation();
   const { data: user, 
           isFetching: isFetchingUser, 
           isSuccess: userRetreived} = useGetCurrentUserQuery();
 
   async function handleOnSubmit(userData : signUpUserDto){
-    signUpRequest(userData);
+    signUpRequest(userData).unwrap();
   }
   
+  if(isFetchingUser){
+    return <AwaitingApi>Loading..</AwaitingApi>
+  }
+  else if(userRetreived){
+    router.push(`/${user.username}`);
+  }
+
   if(signingUp){
     return <AwaitingApi>Registering..</AwaitingApi>
   }
   else if(signedUp){
-    signUpSuccess ? 
-    router.push('/') : 
-    alert(`You did not get registered, 
-          could be due to already exisiting username 
-          or invalid password, make sure to include a small & capital letter, a number, and special character`);
+    router.push('/')
   }
   else if(signUpError){
-    alert(`Failed to register: "${signUpStatus}"`)
-  }
-
-  if(isFetchingUser){
-    return <AwaitingApi>Loading..</AwaitingApi>
-  }
-
-  if(userRetreived){
-    router.push(`/${user.username}`);
+    const e = error as FetchBaseQueryError
+    alert(`Failed to register:\n${e.data}`);
   }
   
   return (

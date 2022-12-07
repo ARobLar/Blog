@@ -27,6 +27,8 @@ export default function RegistrationForm(props : RegistrationFormProps){
     const {target: t } = event
     
     const userData : signUpUserDto = {
+      avatarLabel : "RandomImage",
+      avatarSource : "https://source.unsplash.com/random",
       role: (asAdmin ? t.role.value : UserRole.Member).toString(),
       email: t.email.value, 
       username: t.username.value, 
