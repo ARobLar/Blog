@@ -5,7 +5,6 @@ import { hostBaseUrl } from "../../../../src/CONSTANTS";
 import PostForm from "../../../../src/components/PostForm";
 import { usePostFormStyles } from "../../../../src/styles/formStyles";
 import AwaitingApi from "../../../../src/components/AwaitingApi";
-import Box from "@mui/material/Box";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 import FetchErrorManualRefetch from "../../../../src/components/FetchErrorManualRefetch";
 
@@ -14,14 +13,15 @@ export default function HandlePost() {
   const router = useRouter();
   const { id } = router.query;
   const [ updatePostRequest, 
-          {data: postUpdated, 
-          isSuccess: postUpdateSuccess}] = useUpdatePostMutation();
+          {isSuccess: postUpdated,
+          isError: postUpdateError,
+          error : updatePostErrorMsg}] = useUpdatePostMutation();
   const { data: post, 
           isFetching : retrievingPost, 
           isSuccess : postRetrieved,
-          isError : postError,
+          isError : getPostError,
           refetch : refetchPost,
-          error } = useGetPostQuery(id as string);
+          error : getPostErrorMsg } = useGetPostQuery(id as string);
   const { data: user, 
           isSuccess: userRetreived } = useGetCurrentUserQuery();
 
@@ -30,17 +30,21 @@ export default function HandlePost() {
   async function handleOnSubmit(data : FormData) {
     updatePostRequest({post : data, id: id as string});
   }
-  
-  if(!isCurrentUser || (postUpdateSuccess && postUpdated)){
+
+  if(!isCurrentUser || postUpdated){
     router.back();
+  }
+
+  if(postUpdateError){
+    const e = updatePostErrorMsg as FetchBaseQueryError;
+    alert(`${e.status} : ${e.data}`)
   }
 
   if(retrievingPost){
     return(<AwaitingApi>Loading..</AwaitingApi>)
   } 
-
-  if(postError){
-    const e = error as FetchBaseQueryError;
+  if(getPostError){
+    const e = getPostErrorMsg as FetchBaseQueryError;
     <FetchErrorManualRefetch refetch={refetchPost}>
       {e.status.toString()}: Failed to fetch Post {e.data ? e.data.toString(): ""}
     </FetchErrorManualRefetch>
