@@ -36,9 +36,9 @@ namespace Blog.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type=typeof(OutPostDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(string))]
         public ActionResult<OutPostDto> GetPostById(string id)
         {
             if(!int.TryParse(id, out int postId))
@@ -67,13 +67,16 @@ namespace Blog.Controllers
         }
 
         [HttpGet("{username}/all/cards")]
-        public IEnumerable<OutPostDto> GetAllBlogPostCards(string username)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<OutPostDto>))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        public ActionResult<IEnumerable<OutPostDto>> GetAllBlogPostCards(string username)
         {
             var user = _userManager.FindByNameAsync(username).Result;
 
             if(user == null || user.Deleted)
             {
-                return null;
+                return NotFound(username);
             }
 
             var postCards = _context.Posts.Where(p => p.UserId == user.Id && p.Deleted == false)
@@ -88,7 +91,9 @@ namespace Blog.Controllers
                 })
                 .ToList();
 
-            return postCards;
+            return postCards.Count > 0 ? 
+                    Ok(postCards) : 
+                    NoContent();
         }
 
         [HttpPost("create")]

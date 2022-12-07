@@ -12,18 +12,23 @@ export default function PaginatedPostGrid({itemsPerPage = 4}){
   const [page, setPage] = useState(1);
   const router = useRouter()
   const queryUsername = router.query.username as string;
-  const { data: postCards, isFetching, isError, refetch} = useGetPostCardsQuery(queryUsername);
-  const { data: user, isSuccess : userRetreived } = useGetCurrentUserQuery();
+  const { data: postCards, 
+          isFetching : retrievingPostCards, 
+          isError : postCardsError, 
+          refetch : refetchPostCards} = useGetPostCardsQuery(queryUsername);
+  const { data: user, 
+          isSuccess : userRetreived } = useGetCurrentUserQuery();
   
   const isAuthor = userRetreived ? (user.username == queryUsername) : false;
 
-  if(isFetching)
+  if(retrievingPostCards)
   {
     return(<AwaitingApi>Loading..</AwaitingApi>)
   }
-  else if(isError){
+
+  if(postCardsError){
     return(
-      <FetchErrorManualRefetch refetch={refetch}>
+      <FetchErrorManualRefetch refetch={refetchPostCards}>
         Failed to fetch posts
       </FetchErrorManualRefetch>
     ) 
