@@ -12,6 +12,7 @@ import theme from "../src/theme";
 import { useGetCurrentUserQuery, useSignUpMutation } from "../src/api/apiSlice";
 import RegistrationForm from "../src/components/RegistrationForm";
 import { signUpUserDto } from "../src/interfaces/dto";
+import AwaitingApi from "../src/components/AwaitingApi";
 
 const useStyles = makeStyles({
   "@global": {
@@ -35,26 +36,34 @@ const useStyles = makeStyles({
 export default function SignUp() {
   const classes = useStyles();
   const router = useRouter();
-  const [signUpRequest] = useSignUpMutation();
-  const {data: user, isFetching, isSuccess} = useGetCurrentUserQuery();
+  const [signUpRequest, signUpResult] = useSignUpMutation();
+  const { data: user, 
+          isFetching: isFetchingUser, 
+          isSuccess: isSuccessUser} = useGetCurrentUserQuery();
 
   async function handleOnSubmit(userData : signUpUserDto){
-
-    const success = await signUpRequest(userData).unwrap();
-    
-    if(success){
-      router.push('/');
-    }
-    else{
-      alert('Failed to register!')
-    }
+    signUpRequest(userData);
   }
   
-  if(isFetching){
-    return <h1>Loading..</h1>
+  if(signUpResult.isLoading){
+    return <AwaitingApi>Registering..</AwaitingApi>
+  }
+  else if(signUpResult.isSuccess){
+    signUpResult.data ? 
+    router.push('/') : 
+    alert(`You did not get registered, 
+          could be due to already exisiting username 
+          or invalid password, make sure to include a small & capital letter, a number, and special character`);
+  }
+  else if(signUpResult.isError){
+    alert(`Failed to register: "${signUpResult.status}"`)
   }
 
-  if(isSuccess && user){
+  if(isFetchingUser){
+    return <AwaitingApi>Loading..</AwaitingApi>
+  }
+
+  if(isSuccessUser && user){
     router.push(`/${user.username}`);
   }
   

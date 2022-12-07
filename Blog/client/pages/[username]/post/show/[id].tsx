@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { hostBaseUrl } from '../../../../src/CONSTANTS';
 import Stack from '@mui/material/Stack';
 import theme from '../../../../src/theme';
+import AwaitingApi from '../../../../src/components/AwaitingApi';
 
 const useStyles = makeStyles({
  main: {
@@ -48,12 +49,8 @@ export default function DisplayPost() {
   const { data: post, isFetching, isSuccess } = useGetPostQuery(id as string);
   
   if(isFetching){
-    return (
-    <Box sx={{display: 'flex'}}>
-      Loading...
-      <CircularProgress/>
-    </Box>
-  )}
+    return (<AwaitingApi>Loading...</AwaitingApi>)
+  }
 
   if(isSuccess && post){
 

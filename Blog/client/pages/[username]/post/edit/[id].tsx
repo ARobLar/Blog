@@ -4,6 +4,8 @@ import { useGetCurrentUserQuery, useGetPostQuery, useUpdatePostMutation } from "
 import { hostBaseUrl } from "../../../../src/CONSTANTS";
 import PostForm from "../../../../src/components/PostForm";
 import { usePostFormStyles } from "../../../../src/styles/formStyles";
+import AwaitingApi from "../../../../src/components/AwaitingApi";
+import Box from "@mui/material/Box";
 
 export default function HandlePost() {
   const classes = usePostFormStyles();
@@ -29,13 +31,11 @@ export default function HandlePost() {
   }
 
   if(isFetching){
-    return <div>Loading..</div>
-  }
-  if(isSuccess){
+    return(<AwaitingApi>Loading..</AwaitingApi>)
+  } 
+  else if(isSuccess){
     if(post == null){
-      return(
-        <h1>Invalid post identifier</h1>
-        )
+      return(<Box component="h3">Invalid post identifier</Box>)
     }
 
     return (
