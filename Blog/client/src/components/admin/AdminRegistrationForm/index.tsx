@@ -5,12 +5,23 @@ import Container from "@mui/material/Container"
 import { useSignUpUserAsAdminMutation } from "../../../api/apiSlice";
 import RegistrationForm from "../../RegistrationForm";
 import { signUpUserDto } from "../../../interfaces/dto";
+import AwaitingApi from "../../AwaitingApi";
 
 export default function AdminRegistrationForm(){
-  const [signUpUser] = useSignUpUserAsAdminMutation();
+  const [signUpUserRequest, signUpUserResult] = useSignUpUserAsAdminMutation();
 
   async function handleOnSubmit(userData : signUpUserDto){
-    signUpUser(userData);
+    signUpUserRequest(userData);
+  }
+
+  if(signUpUserResult.isLoading){
+    return <AwaitingApi>Registering..</AwaitingApi>
+  }
+  else if(signUpUserResult.isSuccess){
+    alert(`${signUpUserResult.data ? "Succeded" : "Failed"} to register user`)
+  }
+  else if(signUpUserResult.isError){
+    alert(`Failed to register user: ${signUpUserResult.status}`)
   }
 
   return (

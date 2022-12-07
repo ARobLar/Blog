@@ -9,9 +9,9 @@ type AwaitApiprops = {
 export default function AwaitingApi(props : AwaitApiprops){
 
   return(
-    <Box sx={{ display: 'inline', m: 1 }}>
+    <Box>
       <CircularProgress/>
-      <Box sx={{ display: 'inline', m: 1}}>
+      <Box sx={{ display: 'inline', m: 1 }}>
         {props.children}
       </Box>
     </Box>
