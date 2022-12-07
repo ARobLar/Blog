@@ -1,13 +1,12 @@
 import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
-import Box from '@mui/material/Box';
 import { useGetPostQuery } from '../../../../src/api/apiSlice';
-import CircularProgress from '@mui/material/CircularProgress';
 import { useRouter } from 'next/router';
 import { hostBaseUrl } from '../../../../src/CONSTANTS';
 import Stack from '@mui/material/Stack';
 import theme from '../../../../src/theme';
 import AwaitingApi from '../../../../src/components/AwaitingApi';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
 const useStyles = makeStyles({
  main: {
@@ -46,14 +45,24 @@ export default function DisplayPost() {
   const classes = useStyles();
   const router = useRouter();
   const { id } = router.query;
-  const { data: post, isFetching, isSuccess } = useGetPostQuery(id as string);
+  const { data: post, 
+          isFetching : fetchingPost, 
+          isSuccess : postRetrieved,
+          isError : postError,
+          error} = useGetPostQuery(id as string);
   
-  if(isFetching){
+  if(fetchingPost){
     return (<AwaitingApi>Loading...</AwaitingApi>)
   }
+  
+  if(postError){
+    const e = error as FetchBaseQueryError;
+    <FetchErrorManualRefetch refetch={refetchPost}>
+      {e.status.toString()}: Failed to fetch Post {e.data ? e.data.toString(): ""}
+    </FetchErrorManualRefetch>
+  }
 
-  if(isSuccess && post){
-
+  if(postRetrieved){
     const date = (new Date(Date.parse(post.creationTime.toLocaleString())));
 
     return ( 

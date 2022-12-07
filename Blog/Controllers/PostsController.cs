@@ -36,21 +36,24 @@ namespace Blog.Controllers
         }
 
         [HttpGet("{id}")]
-        public OutPostDto GetPostById(string id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        public ActionResult<OutPostDto> GetPostById(string id)
         {
             if(!int.TryParse(id, out int postId))
-            {
-                return null;
+            {   //Not a number
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, id);
             }
 
             var post = _context.Posts.FirstOrDefault(p => p.Id == postId && p.Deleted == false);
 
             if(post == null)
-            {
-                return null;
+            {   //Invalid Id
+                return NotFound(id);
             }
 
-            return new OutPostDto
+            var p = new OutPostDto
             {
                 Id = id,
                 Title = post.Title,
@@ -59,6 +62,8 @@ namespace Blog.Controllers
                 ImageLabel = post.ImageLabel,
                 ImageSource = post.ImageSource
             };
+
+            return Ok(p);
         }
 
         [HttpGet("{username}/all/cards")]

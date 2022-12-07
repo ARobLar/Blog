@@ -9,18 +9,18 @@ import FetchErrorManualRefetch from "../../src/components/FetchErrorManualRefetc
 export default function Admin(){
   const router = useRouter();
   const { data: user, 
-          isFetching, 
+          isFetching : retrievingUser,
           isSuccess: userRetreived, 
-          isError, 
-          refetch, 
-          error} = useGetCurrentUserQuery();
+          isError : userError, 
+          refetch : refetechUser} = useGetCurrentUserQuery();
 
-  if(isFetching){
+  if(retrievingUser){
     return(<AwaitingApi>Loading..</AwaitingApi>)
   }
-  else if(isError){
+  
+  if(userError){
     return(
-      <FetchErrorManualRefetch refetch={refetch}>
+      <FetchErrorManualRefetch refetch={refetechUser}>
         Failed to check for authorization
       </FetchErrorManualRefetch>
     );

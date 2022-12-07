@@ -83,7 +83,7 @@ namespace Blog.Controllers
         public async Task<ActionResult> Create([FromBody] SignUpUserDto userInfo)
         {
             if (_userManager.FindByNameAsync(userInfo.Username) != null)
-            {   // User already exists
+            {   // User already exists in database (even if deleted)
                 return new ConflictResult();
             }
 

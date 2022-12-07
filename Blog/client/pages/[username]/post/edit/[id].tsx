@@ -6,14 +6,25 @@ import PostForm from "../../../../src/components/PostForm";
 import { usePostFormStyles } from "../../../../src/styles/formStyles";
 import AwaitingApi from "../../../../src/components/AwaitingApi";
 import Box from "@mui/material/Box";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
+import FetchErrorManualRefetch from "../../../../src/components/FetchErrorManualRefetch";
 
 export default function HandlePost() {
   const classes = usePostFormStyles();
   const router = useRouter();
   const { id } = router.query;
-  const [updatePostRequest, {data: postUpdated, isSuccess: postUpdateSuccess}] = useUpdatePostMutation();
-  const { data: post, isFetching, isSuccess } = useGetPostQuery(id as string);
-  const { data: user, isSuccess: userRetreived } = useGetCurrentUserQuery();
+  const [ updatePostRequest, 
+          {data: postUpdated, 
+          isSuccess: postUpdateSuccess}] = useUpdatePostMutation();
+  const { data: post, 
+          isFetching : retrievingPost, 
+          isSuccess : postRetrieved,
+          isError : postError,
+          refetch : refetchPost,
+          error } = useGetPostQuery(id as string);
+  const { data: user, 
+          isSuccess: userRetreived } = useGetCurrentUserQuery();
+
   const isCurrentUser = userRetreived && (user.username == router.query.username);
 
   async function handleOnSubmit(data : FormData) {
@@ -24,14 +35,18 @@ export default function HandlePost() {
     router.back();
   }
 
-  if(isFetching){
+  if(retrievingPost){
     return(<AwaitingApi>Loading..</AwaitingApi>)
   } 
-  else if(isSuccess){
-    if(post == null){
-      return(<Box component="h3">Invalid post identifier</Box>)
-    }
 
+  if(postError){
+    const e = error as FetchBaseQueryError;
+    <FetchErrorManualRefetch refetch={refetchPost}>
+      {e.status.toString()}: Failed to fetch Post {e.data ? e.data.toString(): ""}
+    </FetchErrorManualRefetch>
+  }
+
+  if(postRetrieved){
     return (
       <PostForm initialValues={{
                     title : post.title, 
