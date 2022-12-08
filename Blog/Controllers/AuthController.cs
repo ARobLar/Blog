@@ -66,22 +66,20 @@ namespace Blog.Controllers
         }
 
         [HttpPost("signOut")]
-        public async Task<bool> SignOutUser()
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+        public async Task<ActionResult> SignOutUser()
         {
-            bool success;
-
             try
             {
                 await _signInManager.SignOutAsync();
-                success = true;
+                return NoContent();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                success = false;
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-
-            return success;
         }
     }
 }
