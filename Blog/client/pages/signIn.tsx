@@ -49,7 +49,10 @@ export default function SignIn() {
   const classes = useStyles();
   const router = useRouter();
   const getCurrentUserResult = useGetCurrentUserQuery();
-  const [signInRequest, signInResult] = useSignInMutation();
+  const [ signInRequest, 
+          {isLoading : signingIn,
+          isError: signInError,
+          error}] = useSignInMutation();
   
   async function handleOnSubmit(event : any) {
     event.preventDefault();
@@ -62,11 +65,12 @@ export default function SignIn() {
     });
   }
 
-  if(signInResult.isLoading){
+  if(signingIn){
     return (<AwaitingApi>Signing in..</AwaitingApi>);
   }
-  else if(signInResult.isError){
-    alert(signInResult.status);
+  else if(signInError){
+    const e = error as FetchBaseQueryError;
+    alert(`${e.status}: ${e.data}`);
   }
 
   if(getCurrentUserResult.isFetching){
@@ -75,10 +79,6 @@ export default function SignIn() {
   else if(getCurrentUserResult.isSuccess){
     var user = getCurrentUserResult.data as userDto;
     router.push(`/${user.username}`);
-  }
-  else if(getCurrentUserResult.isError){
-    var error = getCurrentUserResult.error as FetchBaseQueryError;
-    alert(error.status)
   }
 
   return (
