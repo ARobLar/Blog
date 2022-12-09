@@ -2,10 +2,7 @@ using Blog.Controllers;
 using Blog.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,7 +29,10 @@ namespace Blog
         {
             services.AddControllersWithViews();
 
-            services.AddDbContext<BlogDbContext>();
+            services.AddDbContext<BlogDbContext>(options =>
+            {
+                options.UseSqlite(Configuration.GetConnectionString("database"));
+            });
 
             services.AddIdentity<BlogUserEntity, IdentityRole>()
                 .AddEntityFrameworkStores<BlogDbContext>()
