@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,16 +18,13 @@ namespace Blog.Controllers
     public class AdminController : ControllerBase
     {
         private readonly UserManager<BlogUserEntity> _userManager;
-        private readonly SignInManager<BlogUserEntity> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IConfiguration _config;
 
         public AdminController(UserManager<BlogUserEntity> userManager,
-                                SignInManager<BlogUserEntity> signInManager,
-                                RoleManager<IdentityRole> roleManager)
+                                IConfiguration configuration)
         {
             this._userManager = userManager;
-            this._signInManager = signInManager;
-            this._roleManager = roleManager;
+            this._config = configuration;
         }
 
         [HttpGet("users")]
@@ -103,6 +101,10 @@ namespace Blog.Controllers
             if (user == null)
             {   // Invalid user Id
                 return NotFound();
+            }
+            if (user.UserName == _config["DefaultAdmin: Username"])
+            {   //Can't remove default admin, protects from deleting all admins
+                return Forbid();
             }
             if (user.Deleted)
             {   // User already deleted

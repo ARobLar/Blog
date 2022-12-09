@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +17,16 @@ namespace Blog.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserManager<BlogUserEntity> _userManager;
+        private readonly SignInManager<BlogUserEntity> _signInManager;
+        private readonly IConfiguration _config;
 
-        public UsersController(UserManager<BlogUserEntity> userManager)
+        public UsersController(UserManager<BlogUserEntity> userManager,
+                                SignInManager<BlogUserEntity> signInManager,
+                                IConfiguration configuration)
         {
             this._userManager = userManager;
+            this._signInManager = signInManager;
+            this._config = configuration;
         }
 
         [HttpGet("test/current/{choice}")]
@@ -62,7 +69,8 @@ namespace Blog.Controllers
         }
 
         [HttpGet("all/cards")]
-        public IEnumerable<UserCardDto> GetUserCards() 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<UserCardDto>> GetUserCards() 
         {
             var userCards = _userManager.Users
                 .Where(user => user.Deleted == false)
@@ -73,7 +81,7 @@ namespace Blog.Controllers
                     AvatarSource = user.AvatarSource
                 }).ToList();
 
-            return userCards;
+            return Ok(userCards);
         }
 
         [HttpPost("create")]
@@ -82,7 +90,7 @@ namespace Blog.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type=typeof(string))]
         public async Task<ActionResult> Create([FromBody] SignUpUserDto userInfo)
         {
-            if (_userManager.FindByNameAsync(userInfo.Username) != null)
+            if (_userManager.FindByNameAsync(userInfo.Username).Result != null)
             {   // User already exists in database (even if deleted)
                 return new ConflictResult();
             }
@@ -125,27 +133,18 @@ namespace Blog.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError, errors);
         }
 
-        [HttpDelete("{usedId}")]
+        [HttpDelete]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status410Gone)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-        public ActionResult DeleteUser(string userId)
+        public ActionResult DeleteUser()
         {
-            var user = _userManager.FindByIdAsync(userId).Result;
+            var user = _userManager.Users.FirstOrDefault(user => user.UserName == User.Identity.Name);
 
-            if (user == null)
-            {   // Invalid user Id
-                return NotFound();
-            }
-            if (user.Deleted)
-            {   // User already deleted
-                return StatusCode(StatusCodes.Status410Gone);
-            }
-            if (User.Identity.Name != user.UserName)
-            {   //Unauthorized user
-                return Unauthorized();
+            if (user.UserName == _config["DefaultAdmin: Username"])
+            {   //Can't remove default admin, protects from deleting all admins
+                return Forbid();
             }
 
             var errors = string.Empty;
@@ -157,6 +156,7 @@ namespace Blog.Controllers
 
                 if (res.Succeeded)
                 {
+                    _signInManager.SignOutAsync();
                     return NoContent();
                 }
                 else
