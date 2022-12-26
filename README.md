@@ -9,9 +9,9 @@ This Blog project was built using ASP.Net 5, Entity framework, Sqlite, identity 
    - Install "concurrently" by running (only required for 4.A):  
    "npm install concurrently"
    - Enter into the "/client" directory and install the following dependencies:  
-   "npm install @mui/material @emotion/react @emotion/styled @mui/styles @mui/icons-material @reduxjs/toolkit react-redux"
+   "npm install next react react-dom @mui/material @emotion/react @emotion/styled @mui/styles @mui/icons-material @reduxjs/toolkit react-redux"
       - There may be problems with the dependency tree, if so, try running with --legacy-peer-deps instead:  
-   "npm install --legacy-peer-deps @mui/material @emotion/react @emotion/styled @mui/styles @mui/icons-material @reduxjs/toolkit react-redux"  
+   "npm install --legacy-peer-deps next react react-dom @mui/material @emotion/react @emotion/styled @mui/styles @mui/icons-material @reduxjs/toolkit react-redux"  
    - Note, the backend runs on .NET 5.0
    
 4. The client and server can be started in two ways:
