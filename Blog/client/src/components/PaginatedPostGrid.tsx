@@ -3,6 +3,8 @@ import { Box } from "@mui/system";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useGetCurrentUserQuery, useGetPostCardsQuery } from "../api/apiSlice";
+import AwaitingApi from "./AwaitingApi";
+import FetchErrorManualRefetch from "./FetchErrorManualRefetch";
 import PostCard from "./PostCard";
 
 export default function PaginatedPostGrid({itemsPerPage = 4}){
@@ -10,24 +12,31 @@ export default function PaginatedPostGrid({itemsPerPage = 4}){
   const [page, setPage] = useState(1);
   const router = useRouter()
   const queryUsername = router.query.username as string;
-  const { data: postCards, isFetching} = useGetPostCardsQuery(queryUsername);
+  const { data: postCards, isFetching, isError, refetch} = useGetPostCardsQuery(queryUsername);
   const { data: user } = useGetCurrentUserQuery();
   
   const isAuthor = (user != undefined) && (user.username == queryUsername);
 
   if(isFetching)
   {
-    return(<div>Loading</div>)
+    return(<AwaitingApi>Loading..</AwaitingApi>)
+  }
+  else if(isError){
+    return(
+      <FetchErrorManualRefetch refetch={refetch}>
+        Failed to fetch posts
+      </FetchErrorManualRefetch>
+    ) 
   }
 
   if(!postCards){
-    return <div>No Posts</div>
+    return <Box component="h2">No Posts</Box>
   }
 
   const pagePostCards = postCards.slice((page-1)*itemsPerPage, (page)*itemsPerPage);
 
   return(
-    <div>
+    <Box component="div">
       <Grid container spacing={3}>
         {pagePostCards.map((postCard) => (
           <Grid key={postCard.id} item xs={3}>
@@ -48,6 +57,6 @@ export default function PaginatedPostGrid({itemsPerPage = 4}){
           Next
         </Button>
       </Box>
-    </div>
+    </Box>
   )
 }

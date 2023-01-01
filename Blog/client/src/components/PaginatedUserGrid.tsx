@@ -2,25 +2,35 @@ import { Button, Grid } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useState } from "react";
 import { useGetUsersQuery } from "../api/apiSlice";
+import AwaitingApi from "./AwaitingApi";
+import FetchErrorManualRefetch from "./FetchErrorManualRefetch";
 import UserCard from "./UserCard";
 
 export default function PaginatedUserGrid({itemsPerPage = 4}){
 
   const [page, setPage] = useState(1);
-  const { data: userCards, isFetching} = useGetUsersQuery();
+  const { data: userCards, isFetching, isError, refetch } = useGetUsersQuery();
+
   if(isFetching)
   {
-    return(<div>Loading</div>)
+    return(<AwaitingApi>Loading..</AwaitingApi>)
   }
-  
+  else if(isError){
+    return(
+      <FetchErrorManualRefetch refetch={refetch}>
+        Failed to fetch users
+      </FetchErrorManualRefetch>
+    ) 
+  }
+
   if(!userCards){
-    return <div>No Users</div>
+    return <Box component="h2">No Users</Box>
   }
   
   const pageUserCards = userCards.slice((page-1)*itemsPerPage, (page)*itemsPerPage);
   
   return(
-    <div>
+    <Box component="div">
       <Grid container spacing={3}>
         {pageUserCards.map((userCard) => (
           <Grid key={userCard.username} item xs={3}>
@@ -41,6 +51,6 @@ export default function PaginatedUserGrid({itemsPerPage = 4}){
           Next
         </Button>
       </Box>
-    </div>
+    </Box>
   )
 }

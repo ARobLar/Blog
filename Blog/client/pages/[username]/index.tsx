@@ -11,16 +11,17 @@ export default function MemberPage() {
   const router = useRouter();
 
   // For scalability, consider checking if user exists on server side instead, since all users may not be cached
-  const { data: users } = useGetUsersQuery();
-  
+  const { data: users, isSuccess } = useGetUsersQuery();
+
+
   //Ensure selected user exists
-  if(users?.find(({username}) => username == router.query.username) == undefined)
+  if(isSuccess && users?.find(({username}) => username == router.query.username) == undefined)
   {
-    return <div>Sorry, couldn't find the blogger you're searching for</div>
+    return (<Box component="h3">Sorry, couldn't find the blogger you're searching for</Box>)
   }
 
   return (
-    <div>
+    <Box component="div">
       <Box className={classes.header}>
         <Box>{router.query.username}</Box>
       </Box>
@@ -30,6 +31,6 @@ export default function MemberPage() {
         </Typography>
         <PaginatedPostGrid/>
       </Container>
-    </div>
+    </Box>
   );
 }

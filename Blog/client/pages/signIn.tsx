@@ -5,7 +5,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -14,6 +13,7 @@ import { makeStyles } from "@mui/styles";
 import { useRouter } from 'next/router';
 import { useGetCurrentUserQuery, useSignInMutation } from "../src/api/apiSlice";
 import Box from "@mui/material/Box";
+import AwaitingApi from "../src/components/AwaitingApi";
 
 const useStyles = makeStyles({
   root: {
@@ -46,12 +46,12 @@ const useStyles = makeStyles({
 export default function SignIn() {
   const classes = useStyles();
   const router = useRouter();
-  const {data: user, isFetching, isSuccess} = useGetCurrentUserQuery();
+  const {data: user, isFetching : isFetchingUser, isSuccess : isSuccessUser} = useGetCurrentUserQuery();
   const [signInRequest, signInResult] = useSignInMutation();
   
-  async function handleOnSubmit(event) {
+  async function handleOnSubmit(event : any) {
     event.preventDefault();
-    const t = event.target;
+    const {target: t } = event;
     
     signInRequest({
       username : t.username.value,
@@ -61,89 +61,89 @@ export default function SignIn() {
   }
 
   if(signInResult.isLoading){
-    return <div>Attemping to sign in..</div>
+    return <AwaitingApi>Signing in..</AwaitingApi>
   }
-  
-  if(signInResult.isError){
-    console.log(signInResult.error);
-    return <div>An error occured while attempting to sign in!</div>
+  else if(signInResult.isError){
+    alert(signInResult.status);
   }
 
-  if(isFetching){
-    return <div>Loading Page..</div>
+  if(isFetchingUser){
+    return <AwaitingApi>Loading..</AwaitingApi>
   }
 
-  if(isSuccess && user){
+  if(isSuccessUser && user){
     router.push(`/${user.username}`);
   }
+  else{
 
-  return (
-    <Grid container component="main" className={classes.root}>
-      <CssBaseline />
-      <Grid item xs={false} sm={4} md={7} className={classes.image} />
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-          <Box component="form" className={classes.form} onSubmit={handleOnSubmit}>
-            <TextField
-              id="username"
-              name="username"
-              label="Username"
-              autoComplete="username"
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              inputProps= {{maxLength: "15"}}
-              autoFocus
-              />
-            <TextField
-              id="password"
-              name="password"
-              label="Password"
-              autoComplete="current-password"
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              type="password"
-              title="Password may only contain numbers 0 to 9 and letter a to z"
-              />
-            <FormControlLabel
-              control={<Checkbox id="remember" name="remember" color="primary" />}
-              id="rememberMe"
-              name="rememberMe"
-              label="Remember me"
-              />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              >
-              Sign In
-            </Button>
-            <Grid container>
-              {/* <Grid item xs>
-                <Button href="#" variant="text">
+    return (
+      <Grid container component="main" className={classes.root}>
+        <CssBaseline />
+        <Grid item xs={false} sm={4} md={7} className={classes.image} />
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+          <div className={classes.paper}>
+            <Avatar className={classes.avatar}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign in
+            </Typography>
+            <Box component="form" className={classes.form} onSubmit={handleOnSubmit}>
+              <TextField
+                id="username"
+                name="username"
+                label="Username"
+                autoComplete="username"
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                inputProps= {{maxLength: "15"}}
+                autoFocus
+                />
+              <TextField
+                id="password"
+                name="password"
+                label="Password"
+                autoComplete="current-password"
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                type="password"
+                title="Password may only contain numbers 0 to 9 and letter a to z"
+                />
+              <FormControlLabel
+                control={<Checkbox id="remember" name="remember" color="primary" />}
+                id="rememberMe"
+                name="rememberMe"
+                label="Remember me"
+                />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                >
+                Sign In
+              </Button>
+              <Grid container>
+                {/* <Grid item xs>
+                  <Button href="#" variant="text">
                   Forgot password?
-                </Button>
-              </Grid> */}
-              <Grid item>
-                <Button onClick={() => {router.push("/signUp")}} variant="text">
-                  Don't have an account? Sign Up
-                </Button>
+                  </Button>
+                </Grid> */}
+                <Grid item>
+                  <Button onClick={() => {router.push("/signUp")}} variant="text">
+                    Don't have an account? Sign Up
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
-          </Box>
-        </div>
+            </Box>
+          </div>
+        </Grid>
       </Grid>
-    </Grid>
-  );
+    );
+  }
 };
