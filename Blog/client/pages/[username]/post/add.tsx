@@ -6,6 +6,9 @@ import { useAddPostMutation, useGetCurrentUserQuery } from "../../../src/api/api
 import PostForm from "../../../src/components/PostForm";
 import AwaitingApi from "../../../src/components/AwaitingApi";
 import FetchUsersError from "../../../src/components/FetchErrorManualRefetch";
+import Box from "@mui/material/Box";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
+import FetchErrorManualRefetch from "../../../src/components/FetchErrorManualRefetch";
 
 const useStyles = makeStyles({
     paper: {
@@ -19,31 +22,36 @@ const useStyles = makeStyles({
 export default function AddPost() {
   const classes = useStyles();
   const router = useRouter();
-  const [addPostRequest, addPostResult] = useAddPostMutation();
+  const [addPostRequest, 
+        {data: post,
+        isLoading: addingPost,
+        isSuccess: postAdded,
+        isError: addPostError,
+        error}] = useAddPostMutation();
   const { data: user, 
           isFetching : isFetchingCurrentUser, 
-          isSuccess : isSuccessCurrentUser,
+          isSuccess : userRetreived,
           isError : isErrorCurrentUser,
           refetch : refetchCurrentUser } = useGetCurrentUserQuery();
-  const isCurrentUser = (user != undefined) && (user.username == router.query.username);
+  const isCurrentUser = userRetreived && (user.username == router.query.username);
 
   async function handleOnSubmit(form : FormData) {      
     addPostRequest(form);
   }
 
-
-  if(addPostResult.isSuccess){
-    addPostResult.data ? router.push(`/${router.query.username}`) : alert("Failed to add blog post");
+  if(postAdded){
+    router.push(`/${router.query.username}`);
   }
-  else if(addPostResult.isError){
-    alert("Error: Failed to add blog post")
+  else if(addPostError){
+    var e = error as FetchBaseQueryError;
+    alert(`${e.status}: ${e.data}`)
   }
 
   
   if(isFetchingCurrentUser){
     return <AwaitingApi>Checking user credentials..</AwaitingApi>
   }
-  else if(isSuccessCurrentUser && !isCurrentUser){
+  else if(!isCurrentUser){
     router.back();
   }
   else if(isErrorCurrentUser){
@@ -55,8 +63,9 @@ export default function AddPost() {
   }
   
   return (
-    <div className={classes.paper}>
+    <Box component="div" className={classes.paper}>
       <PostForm onSubmit={handleOnSubmit}/>
-    </div>
+      {addingPost && <AwaitingApi>Adding Post..</AwaitingApi>}
+    </Box>
   );
 }

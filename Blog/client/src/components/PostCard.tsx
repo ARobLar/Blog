@@ -1,4 +1,3 @@
-import { makeStyles } from '@mui/styles';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
@@ -9,13 +8,11 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import IconButton from '@mui/material/IconButton';
 import { red, blue } from '@mui/material/colors';
-import { featuredPost, featuredUser } from '../interfaces/types';
+import { featuredPost } from '../interfaces/types';
 import { useRouter } from 'next/router';
 import { hostBaseUrl }  from "../CONSTANTS";
-import { useDeletePostMutation, useGetCurrentUserQuery } from '../api/apiSlice';
+import { useDeletePostMutation } from '../api/apiSlice';
 import { useCardStyles } from '../styles/overviewPageStyles';
-import DeleteOutlined from '@mui/icons-material/DeleteOutlined';
-import Button from '@mui/material/Button';
 
 interface PostCardProps {
   post : featuredPost,

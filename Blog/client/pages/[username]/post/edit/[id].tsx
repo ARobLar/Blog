@@ -5,39 +5,52 @@ import { hostBaseUrl } from "../../../../src/CONSTANTS";
 import PostForm from "../../../../src/components/PostForm";
 import { usePostFormStyles } from "../../../../src/styles/formStyles";
 import AwaitingApi from "../../../../src/components/AwaitingApi";
-import Box from "@mui/material/Box";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
+import FetchErrorManualRefetch from "../../../../src/components/FetchErrorManualRefetch";
 
 export default function HandlePost() {
   const classes = usePostFormStyles();
   const router = useRouter();
   const { id } = router.query;
-  const [updatePost] = useUpdatePostMutation();
-  const {data: post, isFetching, isSuccess } = useGetPostQuery(id as string);
-  const { data: user, isSuccess: isSuccessUser } = useGetCurrentUserQuery();
-  const isCurrentUser = (user != undefined) && (user.username == router.query.username);
+  const [ updatePostRequest, 
+          {isSuccess: postUpdated,
+          isError: postUpdateError,
+          error : updatePostErrorMsg}] = useUpdatePostMutation();
+  const { data: post, 
+          isFetching : retrievingPost, 
+          isSuccess : postRetrieved,
+          isError : getPostError,
+          refetch : refetchPost,
+          error : getPostErrorMsg } = useGetPostQuery(id as string);
+  const { data: user, 
+          isSuccess: userRetreived } = useGetCurrentUserQuery();
+
+  const isCurrentUser = userRetreived && (user.username == router.query.username);
 
   async function handleOnSubmit(data : FormData) {
-    
-    let success = false;
-    success = await updatePost({post : data, id: id as string}).unwrap();
-
-    if(success) {
-      router.back();
-    }
+    updatePostRequest({post : data, id: id as string});
   }
-  
-  if(isSuccessUser && !isCurrentUser){
+
+  if(!isCurrentUser || postUpdated){
     router.back();
   }
 
-  if(isFetching){
+  if(postUpdateError){
+    const e = updatePostErrorMsg as FetchBaseQueryError;
+    alert(`${e.status} : ${e.data}`)
+  }
+
+  if(retrievingPost){
     return(<AwaitingApi>Loading..</AwaitingApi>)
   } 
-  else if(isSuccess){
-    if(post == null){
-      return(<Box component="h3">Invalid post identifier</Box>)
-    }
+  if(getPostError){
+    const e = getPostErrorMsg as FetchBaseQueryError;
+    <FetchErrorManualRefetch refetch={refetchPost}>
+      {e.status.toString()}: Failed to fetch Post {e.data ? e.data.toString(): ""}
+    </FetchErrorManualRefetch>
+  }
 
+  if(postRetrieved){
     return (
       <PostForm initialValues={{
                     title : post.title, 

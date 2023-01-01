@@ -40,8 +40,8 @@ const NavButton = styled(Button)(() => ({
 export default function Navigationbar() {
   const classes = useStyles();
   const router = useRouter();
-  const {data: user, isSuccess} = useGetCurrentUserQuery();
-  const [signOutRequest, signOutResult] = useSignOutMutation();
+  const {data: user, isSuccess : userRetreived} = useGetCurrentUserQuery();
+  const [signOutRequest, {isLoading : signingOut, isError : signOutError}] = useSignOutMutation();
 
   async function handleSignOut(){
     const result = await signOutRequest().unwrap();
@@ -59,28 +59,28 @@ export default function Navigationbar() {
             <HomeIcon/>
           </IconButton>
           <Typography className={classes.title} >
-            {user ? user.username : "Bloggalicious" }
+            {userRetreived ? user.username : "Bloggalicious" }
           </Typography>
           <Stack direction='row' spacing={2}>
-            {signOutResult.isLoading && 
+            {signingOut && 
               <CircularProgress sx={{ color: 'grey.100' }}/>}
-            {signOutResult.isError && 
+            {signOutError && 
               <Typography>Failed to log out</Typography>}
-            {isSuccess && user && user.role == "Admin" &&
+            {userRetreived && user.role == "Admin" &&
               <NavButton onClick={() => (router.push(`/admin`))} color='inherit'>Admin</NavButton>
             }
-            {isSuccess && user &&
-              <>
+            {userRetreived &&
+              <Box>
                 <NavButton onClick={() => (router.push(`/${user.username}/post/add`))} color='inherit' >New Post</NavButton>
                 <NavButton onClick={() => (router.push(`/${user.username}`))} color='inherit'>My Page</NavButton>
                 <NavButton onClick={handleSignOut} color='inherit'>Sign out</NavButton>
-              </>
+              </Box>
             }
             {!user &&
-              <>
+              <Box>
                 <NavButton onClick={() => (router.push('/signUp'))} color='inherit'>Sign up</NavButton>
                 <NavButton onClick={() => (router.push('/signIn'))} color='inherit'>Sign in</NavButton>
-              </>
+              </Box>
             }
           </Stack>
         </Toolbar>

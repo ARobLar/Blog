@@ -10,6 +10,9 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: `${hostBaseUrl}/api`}),
   tagTypes: ['Users', 'Posts', 'Authorized'],
   endpoints : builder => ({
+    getTest : builder.query<boolean, number>({
+      query: (choice) => `/Users/test/current/${choice}`
+    }),
     getCurrentUser: builder.query<userDto, void>({
       query: () => `/Users/current`,
       providesTags: ['Authorized']
@@ -88,6 +91,7 @@ export const apiSlice = createApi({
 })
 
 export const { 
+  useGetTestQuery,
   useGetCurrentUserQuery,
   useGetUsersQuery,
   useGetUsersInfoQuery,

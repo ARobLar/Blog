@@ -4,7 +4,7 @@ import { useRouter } from "next/router"
 
 type FetchUsersErrorProps = {
   refetch : any,
-  children : string
+  children : string | string[]
 }
 
 export default function FetchErrorManualRefetch(props : FetchUsersErrorProps){

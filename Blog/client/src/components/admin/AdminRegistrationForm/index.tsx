@@ -6,22 +6,28 @@ import { useSignUpUserAsAdminMutation } from "../../../api/apiSlice";
 import RegistrationForm from "../../RegistrationForm";
 import { signUpUserDto } from "../../../interfaces/dto";
 import AwaitingApi from "../../AwaitingApi";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 
 export default function AdminRegistrationForm(){
-  const [signUpUserRequest, signUpUserResult] = useSignUpUserAsAdminMutation();
+  const [signUpUserRequest, 
+        {isLoading: signingUpUser, 
+        isSuccess: signedUpUser, 
+        isError: signUpUserError,
+        error}] = useSignUpUserAsAdminMutation();
 
   async function handleOnSubmit(userData : signUpUserDto){
     signUpUserRequest(userData);
   }
 
-  if(signUpUserResult.isLoading){
-    return <AwaitingApi>Registering..</AwaitingApi>
+  if(signingUpUser){
+    return <AwaitingApi>Registering User..</AwaitingApi>
   }
-  else if(signUpUserResult.isSuccess){
-    alert(`${signUpUserResult.data ? "Succeded" : "Failed"} to register user`)
+  else if(signedUpUser){
+    alert(`Succeded to register user`)
   }
-  else if(signUpUserResult.isError){
-    alert(`Failed to register user: ${signUpUserResult.status}`)
+  else if(signUpUserError){
+    const e = error as FetchBaseQueryError
+    alert(`Failed to register:\n${e.data}`);
   }
 
   return (

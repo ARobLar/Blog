@@ -13,6 +13,8 @@ import { useGetCurrentUserQuery, useSignUpMutation } from "../src/api/apiSlice";
 import RegistrationForm from "../src/components/RegistrationForm";
 import { signUpUserDto } from "../src/interfaces/dto";
 import AwaitingApi from "../src/components/AwaitingApi";
+import Box from "@mui/material/Box";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 
 const useStyles = makeStyles({
   "@global": {
@@ -36,41 +38,41 @@ const useStyles = makeStyles({
 export default function SignUp() {
   const classes = useStyles();
   const router = useRouter();
-  const [signUpRequest, signUpResult] = useSignUpMutation();
+  const [ signUpRequest, 
+          {isLoading: signingUp, 
+          isSuccess: signedUp, 
+          isError: signUpError,
+          error}] = useSignUpMutation();
   const { data: user, 
           isFetching: isFetchingUser, 
-          isSuccess: isSuccessUser} = useGetCurrentUserQuery();
+          isSuccess: userRetreived} = useGetCurrentUserQuery();
 
   async function handleOnSubmit(userData : signUpUserDto){
-    signUpRequest(userData);
+    signUpRequest(userData).unwrap();
   }
   
-  if(signUpResult.isLoading){
-    return <AwaitingApi>Registering..</AwaitingApi>
-  }
-  else if(signUpResult.isSuccess){
-    signUpResult.data ? 
-    router.push('/') : 
-    alert(`You did not get registered, 
-          could be due to already exisiting username 
-          or invalid password, make sure to include a small & capital letter, a number, and special character`);
-  }
-  else if(signUpResult.isError){
-    alert(`Failed to register: "${signUpResult.status}"`)
-  }
-
   if(isFetchingUser){
     return <AwaitingApi>Loading..</AwaitingApi>
   }
-
-  if(isSuccessUser && user){
+  else if(userRetreived){
     router.push(`/${user.username}`);
+  }
+
+  if(signingUp){
+    return <AwaitingApi>Registering..</AwaitingApi>
+  }
+  else if(signedUp){
+    router.push('/')
+  }
+  else if(signUpError){
+    const e = error as FetchBaseQueryError
+    alert(`Failed to register:\n${e.data}`);
   }
   
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <div className={classes.paper}>
+      <Box component="div" className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
@@ -85,7 +87,7 @@ export default function SignUp() {
             </Button>
           </Grid>
         </Grid>
-      </div>
+      </Box>
     </Container>
   );
 }

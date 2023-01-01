@@ -1,5 +1,6 @@
 ﻿using Blog.Dto;
 using Blog.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -15,29 +16,24 @@ namespace Blog.Controllers
         private readonly UserManager<BlogUserEntity> _userManager;
 
         public AuthController(SignInManager<BlogUserEntity> signInManager,
-                                UserManager<BlogUserEntity> userManager,
-                                RoleManager<IdentityRole> roleManager,
-                                BlogDbContext context)
+                                UserManager<BlogUserEntity> userManager)
         {
             this._signInManager = signInManager;
             this._userManager = userManager;
         }
 
         [HttpPost("signIn")]
-        public UserDto SignInUser([FromBody] signInDto credentials)
+        [ProducesResponseType(StatusCodes.Status200OK, Type=typeof(UserDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+        public ActionResult<UserDto> SignInUser([FromBody] signInDto credentials)
         {
-
-            if (credentials.Username == null ||
-                credentials.Password == null)
-            {
-                return null;
-            }
-
             var userEntity = _userManager.FindByNameAsync(credentials.Username).Result;
             
             if (userEntity == null || userEntity.Deleted)
             {
-                return null;
+                return NotFound();
             }
 
             try
@@ -46,9 +42,10 @@ namespace Blog.Controllers
 
                 if (!res.Succeeded)
                 {
-                    return null;
+                    return Unauthorized();
                 }
                 
+                // All users require a role
                 var role = _userManager.GetRolesAsync(userEntity).Result[0];
 
                 var user = new UserDto
@@ -59,32 +56,30 @@ namespace Blog.Controllers
                     Role = role
                 };
 
-                return user;
+                return Ok(user);
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return null;
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpPost("signOut")]
-        public async Task<bool> SignOutUser()
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+        public async Task<ActionResult> SignOutUser()
         {
-            bool success;
-
             try
             {
                 await _signInManager.SignOutAsync();
-                success = true;
+                return NoContent();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                success = false;
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-
-            return success;
         }
     }
 }

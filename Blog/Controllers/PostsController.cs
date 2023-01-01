@@ -36,21 +36,24 @@ namespace Blog.Controllers
         }
 
         [HttpGet("{id}")]
-        public OutPostDto GetPostById(string id)
+        [ProducesResponseType(StatusCodes.Status200OK, Type=typeof(OutPostDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(string))]
+        public ActionResult<OutPostDto> GetPostById(string id)
         {
             if(!int.TryParse(id, out int postId))
-            {
-                return null;
+            {   //Not a number
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, id);
             }
 
             var post = _context.Posts.FirstOrDefault(p => p.Id == postId && p.Deleted == false);
 
             if(post == null)
-            {
-                return null;
+            {   //Invalid Id
+                return NotFound(id);
             }
 
-            return new OutPostDto
+            var p = new OutPostDto
             {
                 Id = id,
                 Title = post.Title,
@@ -59,16 +62,21 @@ namespace Blog.Controllers
                 ImageLabel = post.ImageLabel,
                 ImageSource = post.ImageSource
             };
+
+            return Ok(p);
         }
 
         [HttpGet("{username}/all/cards")]
-        public IEnumerable<OutPostDto> GetAllBlogPostCards(string username)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<OutPostDto>))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        public ActionResult<IEnumerable<OutPostDto>> GetAllBlogPostCards(string username)
         {
             var user = _userManager.FindByNameAsync(username).Result;
 
             if(user == null || user.Deleted)
             {
-                return null;
+                return NotFound(username);
             }
 
             var postCards = _context.Posts.Where(p => p.UserId == user.Id && p.Deleted == false)
@@ -83,23 +91,24 @@ namespace Blog.Controllers
                 })
                 .ToList();
 
-            return postCards;
+            return postCards.Count > 0 ? 
+                    Ok(postCards) : 
+                    NoContent();
         }
 
         [HttpPost("create")]
         [Authorize]
-        public bool Create([FromForm] InPostDto post)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+        public ActionResult Create([FromForm] InPostDto post)
         {
             try
             {
+                // Authorized user must exist in database
                 var user = _userManager.FindByNameAsync(User.Identity.Name).Result;
 
-                if(user == null || user.Deleted)
-                {
-                    return false;
-                }
-
                 var imagePaths = SaveImage(post.Image);
+
 
                 var p = new PostEntity
                 {
@@ -107,7 +116,7 @@ namespace Blog.Controllers
                     Title = post.Title,
                     CreationTime = post.CreationTime,
                     Text = post.Text,
-                    ImageLabel = imagePaths["imageName"], // Split them up to imageSource and thumbnailSource
+                    ImageLabel = imagePaths["imageName"],
                     ImageSource = imagePaths["imagePath"],
                     ThumbnailSource = imagePaths["thumbnailPath"],
                     Deleted = false
@@ -116,29 +125,35 @@ namespace Blog.Controllers
                 _context.Posts.Add(p);
                 _context.SaveChanges();
 
-                return true;
+                return NoContent();
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return false;
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpPut("update/{id}")]
         [Authorize]
-        public bool Update([FromForm] InPostDto editedPost, string id)
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(string))]
+        public ActionResult Update([FromForm] InPostDto editedPost, string id)
         {
             if (!int.TryParse(id, out int postId))
-            {
-                return false;
+            {   //Not a number
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, id);
             }
 
             var post = _context.Posts.FirstOrDefault(p => p.Id == postId);
 
-            if (post == null || !IsAuthor(post.UserId))
-            {
-                return false;
+            if (post == null)
+            {   //Invalid Id
+                return NotFound(id);
+            }
+            if (!IsAuthor(post.UserId))
+            {   //Calling user is not author
+                return Unauthorized();
             }
 
             post.Title = editedPost.Title;
@@ -149,63 +164,93 @@ namespace Blog.Controllers
             var editedImageRootPath = string.Empty;
             var editedThumbnailRootPath = string.Empty;
 
-            //Update new images
-            if (editedPost.Image != null)
+            try
             {
-                var imagePaths = SaveImage(editedPost.Image);
+                if (editedPost.Image != null)
+                {
+                    //Update new image and thumbnail
+                    var imagePaths = SaveImage(editedPost.Image);
 
-                oldImageRootPath = Path.Combine(_hostEnvironment.ContentRootPath, post.ImageSource.Replace('/','\\'));
-                oldThumbnailRootPath = Path.Combine(_hostEnvironment.ContentRootPath, post.ThumbnailSource.Replace('/', '\\'));
+                    oldImageRootPath = Path.Combine(_hostEnvironment.ContentRootPath, post.ImageSource.Replace('/','\\'));
+                    oldThumbnailRootPath = Path.Combine(_hostEnvironment.ContentRootPath, post.ThumbnailSource.Replace('/', '\\'));
 
-                post.ImageLabel = imagePaths["imageName"];
-                post.ImageSource = imagePaths["imagePath"];
-                post.ThumbnailSource = imagePaths["thumbnailPath"];
+                    post.ImageLabel = imagePaths["imageName"];
+                    post.ImageSource = imagePaths["imagePath"];
+                    post.ThumbnailSource = imagePaths["thumbnailPath"];
 
-                editedImageRootPath = imagePaths["imageRootPath"];
-                editedThumbnailRootPath = imagePaths["thumbnailRootPath"];
+                    editedImageRootPath = imagePaths["imageRootPath"];
+                    editedThumbnailRootPath = imagePaths["thumbnailRootPath"];
+                }
+
+                _context.Posts.Update(post);
+                var changed = _context.SaveChanges() > 0;
+
+                if(changed && oldImageRootPath != string.Empty)
+                {
+                    // New images added, delete old image files
+                    System.IO.File.Delete(oldImageRootPath);
+                    System.IO.File.Delete(oldThumbnailRootPath);
+                } 
+                else if(!changed && editedImageRootPath != string.Empty)
+                {
+                    // Failed to save new post, delete newly added images
+                    System.IO.File.Delete(editedImageRootPath);
+                    System.IO.File.Delete(editedThumbnailRootPath);
+                }
+
+                return NoContent();
             }
-
-            _context.Posts.Update(post);
-            var changed = _context.SaveChanges() > 0;
-
-            if(changed && oldImageRootPath != string.Empty)
+            catch(Exception ex)
             {
-                // New images added, delete old image files
-                System.IO.File.Delete(oldImageRootPath);
-                System.IO.File.Delete(oldThumbnailRootPath);
-            } 
-            else if(!changed && editedImageRootPath != string.Empty)
-            {
-                // Failed to save new post, delete newly added images
-                System.IO.File.Delete(editedImageRootPath);
-                System.IO.File.Delete(editedThumbnailRootPath);
+                Console.WriteLine(ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-
-            return changed;
         }
 
         [HttpDelete("{id}")]
         [Authorize]
-        public bool Delete(string id) 
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status410Gone)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+        public ActionResult Delete(string id) 
         {
 
             if (!int.TryParse(id, out int postId))
-            {
-                return false;
+            {   //Not a number
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, id);
             }
 
             var post = _context.Posts.FirstOrDefault(p => p.Id == postId);
 
-            if (post != null && IsAuthor(post.UserId))
+            if (post == null)
+            {   // Invalid user Id
+                return NotFound();
+            }
+            if (post.Deleted)
+            {   // User already deleted
+                return StatusCode(StatusCodes.Status410Gone);
+            }
+            if (!IsAuthor(post.UserId))
+            {   //Unauthorized user
+                return Unauthorized();
+            }
+
+            try
             {
                 post.Deleted = true;
+
                 _context.Update(post);
                 _context.SaveChanges();
 
-                return true;
+                return NoContent();
             }
-
-            return false;
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
 
